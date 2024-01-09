@@ -22,7 +22,6 @@ class MyFiles extends StatelessWidget {
               "Hotel profits",
               style: Theme.of(context).textTheme.titleMedium,
             ),
-            
           ],
         ),
         SizedBox(height: defaultPadding),
