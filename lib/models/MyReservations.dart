@@ -46,18 +46,5 @@ List demoMyFiles = [
     color: Color(0xFFA4CDFF),
     percentage: 10,
   ),
-  CloudStorageInfo(
-    title: "Revenue",
-    numOfFiles: 5328,
-    svgSrc: "assets/icons/drop_box.svg",
-    color: Color(0xFF007EE5),
-    percentage: 78,
-  ),
-  CloudStorageInfo(
-    title: "Today",
-    numOfFiles: 5328,
-    svgSrc: "assets/icons/drop_box.svg",
-    color: Color(0xFF007EE5),
-    percentage: 78,
-  ),
+  
 ];

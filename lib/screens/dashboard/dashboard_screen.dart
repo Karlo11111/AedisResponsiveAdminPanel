@@ -31,7 +31,7 @@ class DashboardScreen extends StatelessWidget {
                       (context, constraints) => Column(
                         children: [
                           Text(
-                            "Hello Devs!",
+                            "Hello Aedis Staff!",
                             style: Theme.of(context).textTheme.headline6!.copyWith(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,

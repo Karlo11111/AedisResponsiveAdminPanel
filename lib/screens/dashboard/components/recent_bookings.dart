@@ -1,16 +1,21 @@
 import 'package:admin/models/RecentReservations.dart';
+import 'package:admin/responsive.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-
 import '../../../constants.dart';
 
-class RecentFiles extends StatelessWidget {
+class RecentFiles extends StatefulWidget {
   const RecentFiles({
     Key? key,
   }) : super(key: key);
 
+  @override
+  State<RecentFiles> createState() => _RecentFilesState();
+}
+
+class _RecentFilesState extends State<RecentFiles> {
+  //funciton that fetches reservations from firebase
   Stream<List<UserReservation>> streamReservations() {
     return FirebaseFirestore.instance
         .collection('UsersReservation')
@@ -42,7 +47,9 @@ class RecentFiles extends StatelessWidget {
               stream: streamReservations(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
+                  return Center(
+                    child: Text("Waiting for connection!"),
+                  );
                 }
                 if (snapshot.hasError) {
                   print(
@@ -53,17 +60,47 @@ class RecentFiles extends StatelessWidget {
                   return Text("No Data Available");
                 }
                 var reservations = snapshot.data!;
-                return DataTable(
-                  columnSpacing: defaultPadding,
-                  columns: [
-                    DataColumn(label: Text("Full Name")),
-                    DataColumn(label: Text("Check-in Date")),
-                    DataColumn(label: Text("Country")),
-                  ],
-                  rows: reservations
-                      .map((reservation) => recentFileDataRow(reservation))
-                      .toList(),
-                );
+                // Sorting the reservations by check-in date
+                reservations.sort((a, b) {
+                  // Handle null dates by placing them at the end
+                  var dateA = a.date?.toDate() ?? DateTime(9999);
+                  var dateB = b.date?.toDate() ?? DateTime(9999);
+                  return dateA.compareTo(dateB);
+                });
+                //the data table for users reservations
+                return Responsive.isMobile(context) ||
+                        Responsive.isTablet(context)
+                    ? SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: DataTable(
+                          columnSpacing: defaultPadding,
+                          columns: [
+                            DataColumn(label: Text("Full Name")),
+                            DataColumn(label: Text("Check-in Date")),
+                            DataColumn(label: Text("Country")),
+                            DataColumn(label: Text("Check-In")),
+                            DataColumn(label: Text("More Info")),
+                          ],
+                          rows: reservations
+                              .map((reservation) =>
+                                  recentFileDataRow(reservation))
+                              .toList(),
+                        ),
+                      )
+                    : DataTable(
+                        columnSpacing: defaultPadding,
+                        columns: [
+                          DataColumn(label: Text("Full Name")),
+                          DataColumn(label: Text("Check-in Date")),
+                          DataColumn(label: Text("Country")),
+                          DataColumn(label: Text("Check-In")),
+                          DataColumn(label: Text("More Info")),
+                        ],
+                        rows: reservations
+                            .map(
+                                (reservation) => recentFileDataRow(reservation))
+                            .toList(),
+                      );
               },
             ),
           ),
@@ -87,7 +124,18 @@ DataRow recentFileDataRow(UserReservation reservation) {
         ),
       ),
       DataCell(Text(reservation.getFormattedDate())),
-      DataCell(Text(reservation.size ?? 'Unknown Size'))
+      DataCell(Text(reservation.size ?? 'Unknown Size')),
+      DataCell(TextButton(
+        onPressed: () {},
+        child: Text(
+          "Check-In",
+          style: TextStyle(color: primaryColor),
+        ),
+      )),
+      DataCell(IconButton(
+        onPressed: () {},
+        icon: Icon(Icons.more_horiz),
+      )),
     ],
   );
 }

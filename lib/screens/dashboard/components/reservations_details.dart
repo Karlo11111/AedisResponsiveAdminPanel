@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../constants.dart';
-import 'chart.dart';
 import 'storage_info_card.dart';
 
 class StorageDetails extends StatelessWidget {
@@ -21,7 +20,7 @@ class StorageDetails extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Reservation Details",
+            "Activity Overview",
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w500,
@@ -29,14 +28,13 @@ class StorageDetails extends StatelessWidget {
           ),
           SizedBox(height: defaultPadding),
           Text(
-            "Where do our reservations come from?",
+            "Latest activity in Aedis Hotel",
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w300,
             ),
           ),
           SizedBox(height: defaultPadding),
-          Chart(),
           StorageInfoCard(
             svgSrc: "assets/icons/Documents.svg",
             title: "Documents Files",
