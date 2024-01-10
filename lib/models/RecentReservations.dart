@@ -1,7 +1,31 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
+
 class RecentFile {
   final String? icon, title, date, size;
 
   RecentFile({this.icon, this.title, this.date, this.size});
+}
+
+class UserReservation {
+  final String? icon, title, size;
+  final Timestamp? date;
+  UserReservation({this.icon, this.title, this.date, this.size});
+
+  factory UserReservation.fromMap(Map<String, dynamic> data) {
+    return UserReservation(
+      title: data['firstName'] + ' ' + data['lastName'] ?? "No Name",
+      date: data['checkInDate'],
+      size: data['country'] ?? "No Country",
+    );
+  }
+  String getFormattedDate() {
+    if (date != null) {
+      return DateFormat('yyyy-MM-dd').format(date!.toDate());
+    } else {
+      return "No Date";
+    }
+  }
 }
 
 List demoRecentFiles = [
