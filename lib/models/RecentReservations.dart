@@ -9,66 +9,51 @@ class RecentFile {
 
 class UserReservation {
   final String? icon, title, size;
-  final Timestamp? date;
-  UserReservation({this.icon, this.title, this.date, this.size});
+  final Timestamp? checkInDate;
+  final Timestamp? checkOutDate;
+  final String? adults, children, email, phone, password;
 
+  UserReservation({
+    this.adults,
+    this.children,
+    this.email,
+    this.phone,
+    this.password, 
+    this.icon,
+    this.title,
+    this.checkInDate,
+    this.size,
+    this.checkOutDate,
+  });
+  //getting all data from firebase
   factory UserReservation.fromMap(Map<String, dynamic> data) {
     return UserReservation(
       title: data['firstName'] + ' ' + data['lastName'] ?? "No Name",
-      date: data['checkInDate'],
+      checkInDate: data['checkInDate'],
+      checkOutDate: data['checkOutDate'],
       size: data['country'] ?? "No Country",
+      password: data['password'] ?? "No Password",
+      children: data['children'] ?? "No Children",
+      adults: data['adults'] ?? "No Adults",
+      email: data['email'] ?? "No Email",
+      phone: data['phone'] ?? "No Phone",
     );
   }
-  String getFormattedDate() {
-    if (date != null) {
-      return DateFormat('yyyy-MM-dd').format(date!.toDate());
+  //check in date
+  String getFormattedCheckInDate() {
+    if (checkInDate != null) {
+      return DateFormat('yyyy-MM-dd').format(checkInDate!.toDate());
+    } else {
+      return "No Date";
+    }
+  }
+  //check out date
+  String getFormattedCheckOutDate() {
+    if (checkOutDate != null) {
+      return DateFormat('yyyy-MM-dd').format(checkOutDate!.toDate());
     } else {
       return "No Date";
     }
   }
 }
 
-List demoRecentFiles = [
-  RecentFile(
-    icon: "assets/icons/xd_file.svg",
-    title: "XD File",
-    date: "01-03-2021",
-    size: "3.5mb",
-  ),
-  RecentFile(
-    icon: "assets/icons/Figma_file.svg",
-    title: "Figma File",
-    date: "27-02-2021",
-    size: "19.0mb",
-  ),
-  RecentFile(
-    icon: "assets/icons/doc_file.svg",
-    title: "Document",
-    date: "23-02-2021",
-    size: "32.5mb",
-  ),
-  RecentFile(
-    icon: "assets/icons/sound_file.svg",
-    title: "Sound File",
-    date: "21-02-2021",
-    size: "3.5mb",
-  ),
-  RecentFile(
-    icon: "assets/icons/media_file.svg",
-    title: "Media File",
-    date: "23-02-2021",
-    size: "2.5gb",
-  ),
-  RecentFile(
-    icon: "assets/icons/pdf_file.svg",
-    title: "Sales PDF",
-    date: "25-02-2021",
-    size: "3.5mb",
-  ),
-  RecentFile(
-    icon: "assets/icons/excel_file.svg",
-    title: "Excel File",
-    date: "25-02-2021",
-    size: "34.5mb",
-  ),
-];

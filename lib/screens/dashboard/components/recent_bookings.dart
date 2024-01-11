@@ -63,8 +63,8 @@ class _RecentFilesState extends State<RecentFiles> {
                 // Sorting the reservations by check-in date
                 reservations.sort((a, b) {
                   // Handle null dates by placing them at the end
-                  var dateA = a.date?.toDate() ?? DateTime(9999);
-                  var dateB = b.date?.toDate() ?? DateTime(9999);
+                  var dateA = a.checkInDate?.toDate() ?? DateTime(9999);
+                  var dateB = b.checkInDate?.toDate() ?? DateTime(9999);
                   return dateA.compareTo(dateB);
                 });
                 //the data table for users reservations
@@ -83,7 +83,7 @@ class _RecentFilesState extends State<RecentFiles> {
                           ],
                           rows: reservations
                               .map((reservation) =>
-                                  recentFileDataRow(reservation))
+                                  recentFileDataRow(context, reservation))
                               .toList(),
                         ),
                       )
@@ -98,7 +98,8 @@ class _RecentFilesState extends State<RecentFiles> {
                         ],
                         rows: reservations
                             .map(
-                                (reservation) => recentFileDataRow(reservation))
+                                (reservation) =>
+                                recentFileDataRow(context, reservation))
                             .toList(),
                       );
               },
@@ -110,7 +111,7 @@ class _RecentFilesState extends State<RecentFiles> {
   }
 }
 
-DataRow recentFileDataRow(UserReservation reservation) {
+DataRow recentFileDataRow(BuildContext context, UserReservation reservation) {
   return DataRow(
     cells: [
       DataCell(
@@ -123,7 +124,7 @@ DataRow recentFileDataRow(UserReservation reservation) {
           ],
         ),
       ),
-      DataCell(Text(reservation.getFormattedDate())),
+      DataCell(Text(reservation.getFormattedCheckInDate())),
       DataCell(Text(reservation.size ?? 'Unknown Size')),
       DataCell(TextButton(
         onPressed: () {},
@@ -133,9 +134,56 @@ DataRow recentFileDataRow(UserReservation reservation) {
         ),
       )),
       DataCell(IconButton(
-        onPressed: () {},
+        onPressed: () => showMoreInfoDialog(context, reservation),
         icon: Icon(Icons.more_horiz),
       )),
     ],
+  );
+}
+//dialog box for more info button on the data table
+void showMoreInfoDialog(BuildContext context, UserReservation reservation) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text("User Information"),
+        content: SingleChildScrollView(
+          child: ListBody(
+            children: [
+              //all of the user data, from RecentReservations.dart
+              Text("Full name: ${reservation.title}"),
+              SizedBox(height: defaultPadding),
+              Text("Check-in Date: ${reservation.getFormattedCheckInDate()}"),
+              SizedBox(height: defaultPadding),
+              Text("Check-Out Date: ${reservation.getFormattedCheckOutDate()}"),
+              SizedBox(height: defaultPadding),
+              Text("Country: ${reservation.size}"),
+              SizedBox(height: defaultPadding),
+              Text("Number of adults in the stay: ${reservation.adults}"),
+              SizedBox(height: defaultPadding),
+              Text("Number of children in the stay: ${reservation.children}"),
+              SizedBox(height: defaultPadding),
+              Text("Phone number of the guest: ${reservation.phone}"),
+              SizedBox(height: defaultPadding),
+              Text("Guests account email: ${reservation.email}"),
+              SizedBox(height: defaultPadding),
+              Text("Guests account password: ${reservation.password}"),
+              SizedBox(height: defaultPadding),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            child: Text(
+              "Close",
+              style: TextStyle(color: primaryColor),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
   );
 }
