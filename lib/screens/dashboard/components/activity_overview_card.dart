@@ -3,17 +3,14 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../constants.dart';
 
-class StorageInfoCard extends StatelessWidget {
-  const StorageInfoCard({
+class ActivityOverviewCard extends StatelessWidget {
+  const ActivityOverviewCard({
     Key? key,
     required this.title,
     required this.svgSrc,
-    required this.amountOfFiles,
-    required this.numOfFiles,
   }) : super(key: key);
 
-  final String title, svgSrc, amountOfFiles;
-  final int numOfFiles;
+  final String title, svgSrc;
 
   @override
   Widget build(BuildContext context) {
@@ -44,18 +41,10 @@ class StorageInfoCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  Text(
-                    "$numOfFiles Reservations",
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall!
-                        .copyWith(color: Colors.white70),
-                  ),
                 ],
               ),
             ),
           ),
-          Text(amountOfFiles)
         ],
       ),
     );

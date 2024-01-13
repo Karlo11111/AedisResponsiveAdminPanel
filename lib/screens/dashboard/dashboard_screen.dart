@@ -1,12 +1,13 @@
 import 'package:admin/responsive.dart';
 import 'package:admin/screens/dashboard/components/my_reservations.dart';
+import 'package:admin/screens/dashboard/components/reservations_chart.dart';
 import 'package:flutter/material.dart';
 
 import '../../constants.dart';
 import 'components/header.dart';
 
-import 'components/recent_bookings.dart';
-import 'components/reservations_details.dart';
+import 'components/recent_reservations.dart';
+import 'components/activity_overview.dart';
 
 class DashboardScreen extends StatelessWidget {
   @override
@@ -51,10 +52,12 @@ class DashboardScreen extends StatelessWidget {
                       ),),
                       MyFiles(),
                       SizedBox(height: defaultPadding),
-                      RecentFiles(),
+                      RecentReservations(),
+                      SizedBox(height: defaultPadding),
+                      ReservationsChart(),
                       if (Responsive.isMobile(context))
                         SizedBox(height: defaultPadding),
-                      if (Responsive.isMobile(context)) StorageDetails(),
+                      if (Responsive.isMobile(context)) ActivityOverview(),
                     ],
                   ),
                 ),
@@ -64,7 +67,7 @@ class DashboardScreen extends StatelessWidget {
                 if (!Responsive.isMobile(context))
                   Expanded(
                     flex: 2,
-                    child: StorageDetails(),
+                    child: ActivityOverview(),
                   ),
               ],
             )

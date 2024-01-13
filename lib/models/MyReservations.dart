@@ -17,7 +17,7 @@ class CloudStorageInfo {
 
 List demoMyFiles = [
   CloudStorageInfo(
-    title: "Check-ins",
+    title: "Reservations",
     numOfFiles: 1328,
     svgSrc: "assets/icons/Documents.svg",
     
@@ -25,7 +25,7 @@ List demoMyFiles = [
     percentage: 35,
   ),
   CloudStorageInfo(
-    title: "Total sales",
+    title: "Tasks",
     numOfFiles: 1328,
     svgSrc: "assets/icons/Documents.svg",
     

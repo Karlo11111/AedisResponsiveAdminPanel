@@ -1,12 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
-class RecentFile {
-  final String? icon, title, date, size;
-
-  RecentFile({this.icon, this.title, this.date, this.size});
-}
-
 class UserReservation {
   final String? icon, title, size;
   final Timestamp? checkInDate;

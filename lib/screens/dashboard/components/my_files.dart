@@ -19,7 +19,7 @@ class MyFiles extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "Hotel profits",
+              "Hotel statistics",
               style: Theme.of(context).textTheme.titleMedium,
             ),
             

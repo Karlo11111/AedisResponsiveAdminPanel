@@ -5,16 +5,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../../../constants.dart';
 
-class RecentFiles extends StatefulWidget {
-  const RecentFiles({
+class RecentReservations extends StatefulWidget {
+  const RecentReservations({
     Key? key,
   }) : super(key: key);
 
   @override
-  State<RecentFiles> createState() => _RecentFilesState();
+  State<RecentReservations> createState() => _RecentReservationsState();
 }
 
-class _RecentFilesState extends State<RecentFiles> {
+class _RecentReservationsState extends State<RecentReservations> {
   //funciton that fetches reservations from firebase
   Stream<List<UserReservation>> streamReservations() {
     return FirebaseFirestore.instance
