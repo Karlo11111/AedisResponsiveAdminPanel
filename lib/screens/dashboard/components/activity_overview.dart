@@ -49,7 +49,7 @@ class ActivityOverview extends StatelessWidget {
                 if (bookingTimestamp.compareTo(eightHoursAgoTimestamp) >= 0) {
                   recentBookings.add({
                     'Type': bookingType,
-                    'Name': booking['Name'],
+                    'Name': booking['Name'] ?? 'No Booking',
                     'DateOfBooking': bookingTimestamp
                         .toDate(), // Convert to DateTime for display
                   });

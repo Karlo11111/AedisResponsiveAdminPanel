@@ -6,19 +6,22 @@ class UserReservation {
   final Timestamp? checkInDate;
   final Timestamp? checkOutDate;
   final String? adults, children, email, phone, password;
+  final String? roomNumber;
 
   UserReservation({
+    this.roomNumber,
     this.adults,
     this.children,
     this.email,
     this.phone,
-    this.password, 
+    this.password,
     this.icon,
     this.title,
     this.checkInDate,
     this.size,
     this.checkOutDate,
   });
+  
   //getting all data from firebase
   factory UserReservation.fromMap(Map<String, dynamic> data) {
     return UserReservation(
@@ -31,6 +34,7 @@ class UserReservation {
       adults: data['adults'] ?? "No Adults",
       email: data['email'] ?? "No Email",
       phone: data['phone'] ?? "No Phone",
+      roomNumber: data['roomNumber'] ?? "",
     );
   }
   //check in date
@@ -41,6 +45,7 @@ class UserReservation {
       return "No Date";
     }
   }
+
   //check out date
   String getFormattedCheckOutDate() {
     if (checkOutDate != null) {
@@ -50,4 +55,3 @@ class UserReservation {
     }
   }
 }
-

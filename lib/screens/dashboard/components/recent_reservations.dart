@@ -169,6 +169,7 @@ void showMoreInfoDialog(BuildContext context, UserReservation reservation) {
               SizedBox(height: defaultPadding),
               Text("Guests account password: ${reservation.password}"),
               SizedBox(height: defaultPadding),
+              Text("Guests room number: ${reservation.roomNumber}"),
             ],
           ),
         ),
