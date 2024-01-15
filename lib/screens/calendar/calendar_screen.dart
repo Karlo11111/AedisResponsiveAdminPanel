@@ -1,3 +1,4 @@
+import 'package:admin/screens/calendar/components/calendar_util.dart';
 import 'package:flutter/material.dart';
 
 class CalendarScreen extends StatefulWidget {
@@ -10,6 +11,15 @@ class CalendarScreen extends StatefulWidget {
 class _CalendarScreenState extends State<CalendarScreen> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold();
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          children: [
+            //calendar
+            Expanded(child: SingleChildScrollView(child: CalendarUtil()))
+          ],
+        ),
+      ),
+    );
   }
 }

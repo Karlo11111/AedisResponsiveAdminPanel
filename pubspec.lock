@@ -224,6 +224,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  gantt_chart:
+    dependency: "direct main"
+    description:
+      name: gantt_chart
+      sha256: "23a53b671688f1359ddd9700bd6652c776b795cd6c9fdd0eddefe6535b362c8d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.0"
   google_fonts:
     dependency: "direct main"
     description:
@@ -509,6 +517,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.0"
+  week_of_year:
+    dependency: transitive
+    description:
+      name: week_of_year
+      sha256: "578d2a9c7d93264b363ff3b1789e1acbae42295e803e70d362cfa07fcb73d3d1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.0"
   win32:
     dependency: transitive
     description:
