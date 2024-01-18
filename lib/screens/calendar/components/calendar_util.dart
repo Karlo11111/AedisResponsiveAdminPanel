@@ -56,7 +56,7 @@ class _CalendarUtilState extends State<CalendarUtil> {
                   checkInDate.year, checkInDate.month, checkInDate.day);
               checkOutDate = DateTime(
                   checkOutDate.year, checkOutDate.month, checkOutDate.day);
-              int startDay = checkInDate.difference(ganttChartStartDate).inDays;
+              int startDay = checkInDate.difference(ganttChartStartDate).inDays + 1;
               if (startDay < 0) startDay = 0;
 
               // Calculate duration
@@ -132,7 +132,8 @@ class _CalendarUtilState extends State<CalendarUtil> {
                       ),
                     ),
                   )
-                : Container(); // Return an empty container for subsequent events of the same room
+                // Return an empty container for subsequent events of the same room
+                : Container();
           },
           events: allEvents, // Use the flattened list of events
         );
