@@ -71,8 +71,6 @@ Widget _buildTaskColumn(String title, Color color, BuildContext context) {
               ),
           ],
         ),
-        // Here you would use a ListView.builder or similar to populate the tasks
-        if (isAssignedColumn) Expanded(child: buildAssignedTasks()),
         Expanded(
           child: DragTarget<Task>(
             onWillAccept: (task) {
@@ -155,6 +153,26 @@ void _showAddTaskDialog(BuildContext context) {
               } else {
                 // Handle the case where not all fields are filled
                 print('Please fill in all fields');
+                Widget okButton = TextButton(
+                  child: Text("OK"),
+                  onPressed: () => Navigator.pop(context),
+                );
+                
+                // set up the AlertDialog
+                AlertDialog alert = AlertDialog(
+                  title: Text("Error"),
+                  content: Text("Please fill in all fields."),
+                  actions: [
+                    okButton,
+                  ],
+                );
+
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return alert;
+                  },
+                );
               }
             },
           ),
@@ -163,6 +181,7 @@ void _showAddTaskDialog(BuildContext context) {
     },
   );
 }
+
 
 //function that adds tasks to firebase
 Future<void> addTaskToFirebase(Task task) async {
@@ -177,50 +196,17 @@ Future<void> addTaskToFirebase(Task task) async {
 }
 
 //stream for getting the tasks
-Stream<DocumentSnapshot> getAssignedTasksStream() {
+Stream<QuerySnapshot> getAssignedTasksStream() {
   return FirebaseFirestore.instance
       .collection('Tasks')
-      .doc('Assigned')
+      .where("Status", isEqualTo: "Assigned")
       .snapshots();
-}
-
-Widget buildAssignedTasks() {
-  return StreamBuilder<DocumentSnapshot>(
-    stream: getAssignedTasksStream(),
-    builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-      if (snapshot.hasError) {
-        return Text('Error: ${snapshot.error}');
-      }
-      switch (snapshot.connectionState) {
-        case ConnectionState.waiting:
-          return Text('Loading...');
-        default:
-          if (!snapshot.data!.exists) {
-            return Text('No tasks assigned');
-          }
-          Map<String, dynamic> tasks =
-              snapshot.data!.data() as Map<String, dynamic>;
-          return ListView(
-            children: tasks.entries.map((entry) {
-              String taskName = entry.key;
-              Map<String, dynamic> taskDetails = entry.value;
-              return ListTile(
-                title: Text(taskName),
-                subtitle: Text('Assigned to: ${taskDetails['Role']}'),
-              );
-            }).toList(),
-          );
-      }
-    },
-  );
 }
 
 Widget buildTaskList(String status) {
   return StreamBuilder<DocumentSnapshot>(
-    stream: FirebaseFirestore.instance
-        .collection('Tasks')
-        .doc(status) // Using 'status' here to fetch the correct document
-        .snapshots(),
+    stream:
+        FirebaseFirestore.instance.collection('Tasks').doc(status).snapshots(),
     builder: (context, snapshot) {
       if (snapshot.hasError) {
         return Text('Error: ${snapshot.error}');
@@ -231,30 +217,38 @@ Widget buildTaskList(String status) {
       if (!snapshot.hasData || !snapshot.data!.exists) {
         return Text('No tasks in $status');
       }
-
+      print(snapshot.data!.data());
       Map<String, dynamic> tasksData =
           snapshot.data!.data() as Map<String, dynamic>;
-print(tasksData);
+      if (tasksData.isEmpty) {
+        return Text('No tasks in $status');
+      }
       List<Task> tasks = [];
+
       tasksData.forEach((key, value) {
         if (value is Map<String, dynamic>) {
-          tasks.add(
-              Task.fromMap(value, key));
-               // Assuming 'key' can be used as an ID
+          tasks.add(Task.fromMap(value, key));
         }
       });
 
-      return ListView(
-        children: tasks.map((Task task) {
+      return ListView.builder(
+        itemCount: tasks.length,
+        itemBuilder: (context, index) {
+          Task task = tasks[index];
           return Draggable<Task>(
             data: task,
             child: TaskItem(task: task),
             feedback: Material(
-              child: Container(
-                width: 100,
-                color: Colors.blue,
-                child: Text(task.name, style: TextStyle(color: Colors.white)),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  // Set the constraints to match the original task item
+                  minWidth: 300,
+                  maxWidth: 350,
+                  minHeight: 48.0, // Minimum height for ListTile
+                ),
+                child: TaskItem(task: task), // The item being dragged
               ),
+              elevation: 4.0, // Add elevation to raise the feedback widget
             ),
             childWhenDragging: Opacity(
               opacity: 0.5,
@@ -262,14 +256,15 @@ print(tasksData);
             ),
             onDragStarted: () => print("Dragging task: ${task.name}"),
           );
-        }).toList(),
+        },
       );
     },
   );
 }
 
 Future<void> transferTask(Task task, {required String newStatus}) async {
-  CollectionReference tasksCollection = FirebaseFirestore.instance.collection('Tasks');
+  CollectionReference tasksCollection =
+      FirebaseFirestore.instance.collection('Tasks');
   DocumentReference oldStatusDoc = tasksCollection.doc(task.status);
   DocumentReference newStatusDoc = tasksCollection.doc(newStatus);
 
@@ -281,7 +276,8 @@ Future<void> transferTask(Task task, {required String newStatus}) async {
     // Now perform all writes
     if (oldStatusSnapshot.exists) {
       transaction.update(oldStatusDoc, {
-        '${task.name}': FieldValue.delete(), // Use the exact field name to delete
+        '${task.name}':
+            FieldValue.delete(), // Use the exact field name to delete
       });
     }
 
@@ -294,7 +290,8 @@ Future<void> transferTask(Task task, {required String newStatus}) async {
       });
     } else {
       transaction.update(newStatusDoc, {
-        '${task.name}': taskData, // Update the existing field with new task data
+        '${task.name}':
+            taskData, // Update the existing field with new task data
       });
     }
   }).then((result) {
