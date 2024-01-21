@@ -25,15 +25,9 @@ Widget _buildMobileLayout(BuildContext context) {
   return Column(
     children: [
       TasksHeader(),
-      Expanded(
-        child: _buildTaskColumn('Assigned', Colors.blue, context),
-      ),
-      Expanded(
-        child: _buildTaskColumn('In Work', Colors.orange, context),
-      ),
-      Expanded(
-        child: _buildTaskColumn('Finished', Colors.green, context),
-      ),
+      Expanded(child: _buildTaskColumn('Assigned', Colors.blue, context)),
+      Expanded(child: _buildTaskColumn('In Work', Colors.orange, context)),
+      Expanded(child: _buildTaskColumn('Finished', Colors.green, context)),
     ],
   );
 }
@@ -49,6 +43,7 @@ Widget _buildDesktopLayout(BuildContext context) {
   );
 }
 
+//widget for building tasks
 Widget _buildTaskColumn(String title, Color color, BuildContext context) {
   bool isAssignedColumn = title == 'Assigned';
   return Container(
@@ -182,7 +177,6 @@ void _showAddTaskDialog(BuildContext context) {
   );
 }
 
-
 //function that adds tasks to firebase
 Future<void> addTaskToFirebase(Task task) async {
   DocumentReference taskDoc =
@@ -195,14 +189,7 @@ Future<void> addTaskToFirebase(Task task) async {
       .catchError((error) => print("Failed to add task: $error"));
 }
 
-//stream for getting the tasks
-Stream<QuerySnapshot> getAssignedTasksStream() {
-  return FirebaseFirestore.instance
-      .collection('Tasks')
-      .where("Status", isEqualTo: "Assigned")
-      .snapshots();
-}
-
+//widget that builds the task list
 Widget buildTaskList(String status) {
   return StreamBuilder<DocumentSnapshot>(
     stream:
@@ -230,7 +217,7 @@ Widget buildTaskList(String status) {
           tasks.add(Task.fromMap(value, key));
         }
       });
-
+      //list view for building the tiles
       return ListView.builder(
         itemCount: tasks.length,
         itemBuilder: (context, index) {
@@ -238,17 +225,19 @@ Widget buildTaskList(String status) {
           return Draggable<Task>(
             data: task,
             child: TaskItem(task: task),
+            //when the list tile is dragged
             feedback: Material(
               child: ConstrainedBox(
                 constraints: BoxConstraints(
-                  // Set the constraints to match the original task item
                   minWidth: 300,
                   maxWidth: 350,
-                  minHeight: 48.0, // Minimum height for ListTile
+                  minHeight: 48.0,
                 ),
-                child: TaskItem(task: task), // The item being dragged
+                //the item being dragged
+                child: TaskItem(task: task), 
               ),
-              elevation: 4.0, // Add elevation to raise the feedback widget
+              //elevation to raise the feedback widget
+              elevation: 4.0, 
             ),
             childWhenDragging: Opacity(
               opacity: 0.5,
@@ -262,6 +251,7 @@ Widget buildTaskList(String status) {
   );
 }
 
+//function for taks transferring
 Future<void> transferTask(Task task, {required String newStatus}) async {
   CollectionReference tasksCollection =
       FirebaseFirestore.instance.collection('Tasks');
