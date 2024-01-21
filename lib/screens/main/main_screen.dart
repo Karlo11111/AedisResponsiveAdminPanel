@@ -4,6 +4,7 @@ import 'package:admin/controllers/MenuAppController.dart';
 import 'package:admin/responsive.dart';
 import 'package:admin/screens/dashboard/dashboard_screen.dart';
 import 'package:admin/screens/calendar/calendar_screen.dart';
+import 'package:admin/screens/tasks/tasks_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -21,7 +22,7 @@ class _MainScreenState extends State<MainScreen> {
   void _onItemSelected(int index) {
     setState(() {
       _selectedIndex = index;
-      _currentBody = _getBodyWidget(index); 
+      _currentBody = _getBodyWidget(index);
     });
   }
 
@@ -31,6 +32,8 @@ class _MainScreenState extends State<MainScreen> {
         return DashboardScreen();
       case 1:
         return CalendarScreen();
+      case 2:
+        return TasksScreen();
       default:
         return DashboardScreen();
     }
