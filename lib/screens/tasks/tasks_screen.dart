@@ -61,7 +61,7 @@ Widget _buildTaskColumn(String title, Color color, BuildContext context) {
               IconButton(
                 icon: Icon(Icons.add, color: color),
                 onPressed: () {
-                  _showAddTaskDialog(context);
+                  showAddTaskDialog(context);
                 },
               ),
           ],
@@ -86,8 +86,70 @@ Widget _buildTaskColumn(String title, Color color, BuildContext context) {
   );
 }
 
+//widget that builds the task list
+Widget buildTaskList(String status) {
+  return StreamBuilder<DocumentSnapshot>(
+    stream:
+        FirebaseFirestore.instance.collection('Tasks').doc(status).snapshots(),
+    builder: (context, snapshot) {
+      if (snapshot.hasError) {
+        return Text('Error: ${snapshot.error}');
+      }
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return Text("Loading");
+      }
+      if (!snapshot.hasData || !snapshot.data!.exists) {
+        return Text('No tasks in $status');
+      }
+      print(snapshot.data!.data());
+      Map<String, dynamic> tasksData =
+          snapshot.data!.data() as Map<String, dynamic>;
+      if (tasksData.isEmpty) {
+        return Text('No tasks in $status');
+      }
+      List<Task> tasks = [];
+
+      tasksData.forEach((key, value) {
+        if (value is Map<String, dynamic>) {
+          tasks.add(Task.fromMap(value, key));
+        }
+      });
+      //list view for building the tiles
+      return ListView.builder(
+        itemCount: tasks.length,
+        itemBuilder: (context, index) {
+          Task task = tasks[index];
+          return Draggable<Task>(
+            data: task,
+            child: TaskItem(task: task),
+            //when the list tile is dragged
+            feedback: Material(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minWidth: 300,
+                  maxWidth: 350,
+                  minHeight: 48.0,
+                ),
+                //the item being dragged
+                child: TaskItem(task: task),
+              ),
+              //elevation to raise the feedback widget
+              elevation: 4.0,
+            ),
+            childWhenDragging: Opacity(
+              opacity: 0.5,
+              child: TaskItem(task: task),
+            ),
+            onDragStarted: () => print("Dragging task: ${task.name}"),
+          );
+        },
+      );
+    },
+  );
+}
+
 //add task dialog
-void _showAddTaskDialog(BuildContext context) {
+void showAddTaskDialog(BuildContext context) {
   TextEditingController _taskNameController = TextEditingController();
   String? selectedRole;
 
@@ -187,68 +249,6 @@ Future<void> addTaskToFirebase(Task task) async {
           SetOptions(merge: true)) // Merging with existing data
       .then((value) => print("Task Added"))
       .catchError((error) => print("Failed to add task: $error"));
-}
-
-//widget that builds the task list
-Widget buildTaskList(String status) {
-  return StreamBuilder<DocumentSnapshot>(
-    stream:
-        FirebaseFirestore.instance.collection('Tasks').doc(status).snapshots(),
-    builder: (context, snapshot) {
-      if (snapshot.hasError) {
-        return Text('Error: ${snapshot.error}');
-      }
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return Text("Loading");
-      }
-      if (!snapshot.hasData || !snapshot.data!.exists) {
-        return Text('No tasks in $status');
-      }
-      print(snapshot.data!.data());
-      Map<String, dynamic> tasksData =
-          snapshot.data!.data() as Map<String, dynamic>;
-      if (tasksData.isEmpty) {
-        return Text('No tasks in $status');
-      }
-      List<Task> tasks = [];
-
-      tasksData.forEach((key, value) {
-        if (value is Map<String, dynamic>) {
-          tasks.add(Task.fromMap(value, key));
-        }
-      });
-      //list view for building the tiles
-      return ListView.builder(
-        itemCount: tasks.length,
-        itemBuilder: (context, index) {
-          Task task = tasks[index];
-          return Draggable<Task>(
-            data: task,
-            child: TaskItem(task: task),
-            //when the list tile is dragged
-            feedback: Material(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minWidth: 300,
-                  maxWidth: 350,
-                  minHeight: 48.0,
-                ),
-                //the item being dragged
-                child: TaskItem(task: task), 
-              ),
-              //elevation to raise the feedback widget
-              elevation: 4.0, 
-            ),
-            childWhenDragging: Opacity(
-              opacity: 0.5,
-              child: TaskItem(task: task),
-            ),
-            onDragStarted: () => print("Dragging task: ${task.name}"),
-          );
-        },
-      );
-    },
-  );
 }
 
 //function for taks transferring
