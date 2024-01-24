@@ -38,6 +38,8 @@ dependencies:
   intl: ^0.17.0
   charts_flutter: ^0.12.0
   gantt_chart: ^0.3.0
+  blinkid_flutter: ^6.4.0
+  http: ^1.2.0
 
 dev_dependencies:
   flutter_test:
