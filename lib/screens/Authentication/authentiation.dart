@@ -1,4 +1,7 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:admin/constants.dart';
+import 'package:admin/responsive.dart';
 import 'package:admin/screens/Authentication/components/button.dart';
 import 'package:admin/screens/Authentication/components/text_controller.dart';
 import 'package:admin/screens/main/main_screen.dart';
@@ -22,39 +25,41 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     // Show loading circle
     showDialog(
       context: context,
-      builder: (context) => Center(child: CircularProgressIndicator()),
+      builder: (context) => Center(),
     );
     // Try signing in
     try {
-      UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
-              email: emailTextController.text,
-              password: passwordTextController.text);
-
-      // Check if the user is an employee
-      FirebaseFirestore.instance
+      //getting the employee document
+      DocumentSnapshot employeeDoc = await FirebaseFirestore.instance
           .collection('Employees')
-          .doc(userCredential.user!.email)
-          .get()
-          .then((doc) {
-        if (doc.exists) {
-          // User is an employee, navigate to employee page
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder: (context) => MainScreen(),
-            ),
-            (Route<dynamic> route) => false,
-          );
-        } else {
-          displayMessage("You are not authorized to join this website");
-        }
-      });
-    } on FirebaseAuthException catch (e) {
-      // Pop loading circle
+          .doc(emailTextController.text)
+          .get();
+
+      if (!mounted) return;
+
+      // Dismiss the loading dialog in any case
       Navigator.pop(context);
-      // Display if there's an error while logging in
-      displayMessage(e.code);
+
+      Map<String, dynamic>? employeeData =
+          employeeDoc.data() as Map<String, dynamic>?;
+
+      if (employeeData != null && employeeData["employee"] == 'admin') {
+        // User is an admin, navigate to MainScreen
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => MainScreen()),
+          (Route<dynamic> route) => false,
+        );
+      } else {
+        // User is not an admin
+        displayMessage("You are not authorized to join this website");
+      }
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+      // Dismiss the loading dialog if an exception occurs
+      Navigator.pop(context);
+      // Display the error message
+      displayMessage("Login failed: ${e.message}");
     }
   }
 
@@ -77,41 +82,50 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Center(
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 600),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                //sign in text
+          child: Padding(
+            padding: Responsive.isDesktop(context)
+                ? EdgeInsets.symmetric(horizontal: 600)
+                : EdgeInsets.symmetric(horizontal: 100),
+            child: Container(
+              padding:
+                  EdgeInsets.only(top: 80, bottom: 80, right: 20, left: 20),
+              decoration: BoxDecoration(
+                  color: secondaryColor,
+                  borderRadius: BorderRadius.circular(defaultPadding)),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  //sign in text
 
-                //text fields
-                MyTextField(
-                  controller: emailTextController,
-                  hintText: "Your Admin Email",
-                  obscureText: false,
-                ),
-                SizedBox(height: defaultPadding),
-                MyTextField(
-                  controller: passwordTextController,
-                  hintText: "Your Admin Password",
-                  obscureText: false,
-                ),
+                  //text fields
+                  MyTextField(
+                    controller: emailTextController,
+                    hintText: "Your Admin Email",
+                    obscureText: false,
+                  ),
+                  SizedBox(height: defaultPadding),
+                  MyTextField(
+                    controller: passwordTextController,
+                    hintText: "Your Admin Password",
+                    obscureText: false,
+                  ),
 
-                SizedBox(height: defaultPadding),
+                  SizedBox(height: defaultPadding),
 
-                //continue button
-                MyButton(
-                  buttonText: "Sign in",
-                  ontap: SignIn,
-                  height: 50,
-                  width: double.infinity,
-                  decorationColor: secondaryColor,
-                  borderColor: primaryColor,
-                  textColor: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                )
-              ],
+                  //continue button
+                  MyButton(
+                    buttonText: "Sign in",
+                    ontap: SignIn,
+                    height: 50,
+                    width: double.infinity,
+                    decorationColor: primaryColor,
+                    borderColor: Colors.white,
+                    textColor: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  )
+                ],
+              ),
             ),
           ),
         )
