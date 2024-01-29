@@ -41,8 +41,10 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final scaffoldKey = context.read<MenuAppController>().scaffoldKey;
+
     return Scaffold(
-      key: context.read<MenuAppController>().scaffoldKey,
+      key: scaffoldKey,
       drawer: SideMenu(
         selectedIndex: _selectedIndex,
         onItemSelected: _onItemSelected,

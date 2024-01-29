@@ -38,7 +38,6 @@ class _CalendarUtilState extends State<CalendarUtil> {
       for (var doc in snapshot.docs) {
         final data = doc.data();
         final roomNumber = data['roomNumber'];
-        print(roomNumber);
         roomEventsMap[roomNumber] = []; // Initialize list for each room
 
         if (data['reservations'] != null) {

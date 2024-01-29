@@ -7,7 +7,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:html' as html;
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'dart:js' as js;
 
 import 'package:flutter/material.dart';
 import '../../../constants.dart';

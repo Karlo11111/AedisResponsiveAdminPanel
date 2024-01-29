@@ -13,7 +13,7 @@ class ReservationsChart extends StatelessWidget {
   Widget build(BuildContext context) {
     // Calculate the dates for 3 days before to 3 days after today
     List<DateTime> dateRange = List.generate(
-      7, (index) => DateTime.now().subtract(Duration(days: 3 - index)));
+        7, (index) => DateTime.now().subtract(Duration(days: 3 - index)));
 
     return Container(
       decoration: BoxDecoration(
@@ -42,9 +42,7 @@ class ReservationsChart extends StatelessWidget {
                     .get(),
                 FirebaseFirestore.instance
                     .collection('DeletedReservations')
-                    .where('checkInDate',
-                        isGreaterThanOrEqualTo: dateRange.first,
-                        isLessThanOrEqualTo: dateRange.last)
+                    .where('checkInDate')
                     .get(),
               ]),
               builder: (context, AsyncSnapshot<List<QuerySnapshot>> snapshot) {
@@ -54,7 +52,7 @@ class ReservationsChart extends StatelessWidget {
                 if (snapshot.hasError || !snapshot.hasData) {
                   return Text('Error fetching reservations.');
                 }
-
+                
                 // Combine data from both collections
                 List<DocumentSnapshot> combinedDocs = [
                   ...snapshot.data![0].docs,
@@ -95,10 +93,10 @@ class ReservationsChart extends StatelessWidget {
                         .toList(),
                   )
                 ];
-            
-               return Padding(
-                 padding: const EdgeInsets.all(24.0),
-                 child: charts.BarChart(
+
+                return Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: charts.BarChart(
                     seriesList,
                     animate: animate,
                     primaryMeasureAxis: charts.NumericAxisSpec(
@@ -107,8 +105,8 @@ class ReservationsChart extends StatelessWidget {
                       renderSpec: charts.GridlineRendererSpec(
                         labelStyle: charts.TextStyleSpec(
                           fontSize: 11, // Adjust the font size as needed
-                          color: charts
-                              .MaterialPalette.white, // Set the text color to white
+                          color: charts.MaterialPalette
+                              .white, // Set the text color to white
                         ),
                         lineStyle: charts.LineStyleSpec(
                           color: charts.MaterialPalette
@@ -117,17 +115,18 @@ class ReservationsChart extends StatelessWidget {
                       ),
                     ),
                     domainAxis: charts.OrdinalAxisSpec(
-                      viewport: charts.OrdinalViewport(dateRange[3].toString(), 7),
+                      viewport:
+                          charts.OrdinalViewport(dateRange[3].toString(), 7),
                       renderSpec: charts.SmallTickRendererSpec(
                         labelStyle: charts.TextStyleSpec(
                           fontSize: 11, // Adjust the font size as needed
-                          color: charts
-                              .MaterialPalette.white, // Set the text color to white
+                          color: charts.MaterialPalette
+                              .white, // Set the text color to white
                         ),
                       ),
                     ),
                   ),
-               );
+                );
               },
             ),
           ),
