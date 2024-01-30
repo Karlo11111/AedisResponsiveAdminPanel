@@ -2,8 +2,8 @@
 
 import 'package:admin/constants.dart';
 import 'package:admin/responsive.dart';
-import 'package:admin/screens/Authentication/components/button.dart';
-import 'package:admin/screens/Authentication/components/text_controller.dart';
+import 'package:admin/screens/authentication/components/button.dart';
+import 'package:admin/screens/authentication/components/text_controller.dart';
 import 'package:admin/screens/main/main_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';

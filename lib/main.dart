@@ -1,8 +1,8 @@
 import 'package:admin/constants.dart';
 import 'package:admin/controllers/MenuAppController.dart';
 import 'package:admin/firebase/firebase_options.dart';
-import 'package:admin/screens/Authentication/authentiation.dart';
-import 'package:admin/screens/Authentication/components/auth_service.dart';
+import 'package:admin/screens/authentication/authentiation.dart';
+import 'package:admin/screens/authentication/components/auth_service.dart';
 import 'package:admin/screens/dashboard/components/recent_reservations.dart';
 import 'package:admin/screens/main/main_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';

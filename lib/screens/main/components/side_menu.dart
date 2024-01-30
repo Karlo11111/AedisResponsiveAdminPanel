@@ -36,8 +36,8 @@ class SideMenu extends StatelessWidget {
             selectedIndex: selectedIndex == 2,
           ),
           DrawerListTile(
-            title: "Rooms",
-            svgSrc: "assets/icons/unknown.svg",
+            title: "Employers",
+            svgSrc: "assets/icons/employee.svg",
             press: () => onItemSelected(3),
             selectedIndex: selectedIndex == 3,
           ),

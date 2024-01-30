@@ -6,11 +6,17 @@ import 'package:provider/provider.dart';
 
 import '../../../constants.dart';
 
-class Header extends StatelessWidget {
+class Header extends StatefulWidget {
+  final String headerName;
   const Header({
-    Key? key,
+    Key? key, required this.headerName
   }) : super(key: key);
 
+  @override
+  State<Header> createState() => _HeaderState();
+}
+
+class _HeaderState extends State<Header> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -23,7 +29,7 @@ class Header extends StatelessWidget {
             ),
           if (!Responsive.isMobile(context))
             Text(
-              "Dashboard",
+              widget.headerName,
               style: Theme.of(context).textTheme.titleLarge,
             ),
           if (!Responsive.isMobile(context))
