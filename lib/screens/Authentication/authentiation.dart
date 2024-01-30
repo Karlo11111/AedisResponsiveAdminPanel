@@ -29,10 +29,15 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     );
     // Try signing in
     try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+              email: emailTextController.text,
+              password: passwordTextController.text);
+
       //getting the employee document
       DocumentSnapshot employeeDoc = await FirebaseFirestore.instance
           .collection('Employees')
-          .doc(emailTextController.text)
+          .doc(userCredential.user!.email)
           .get();
 
       if (!mounted) return;

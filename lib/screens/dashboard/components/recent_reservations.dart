@@ -19,11 +19,10 @@ class RecentReservations extends StatefulWidget {
   @override
   State<RecentReservations> createState() => _RecentReservationsState();
 }
+
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 class _RecentReservationsState extends State<RecentReservations> {
-  
-
   //funciton that fetches reservations from firebase
   Stream<List<UserReservation>> streamReservations() {
     return FirebaseFirestore.instance
@@ -31,7 +30,7 @@ class _RecentReservationsState extends State<RecentReservations> {
         .snapshots()
         .map((snapshot) => snapshot.docs
             .map((doc) =>
-                UserReservation.fromMap(doc.data() as Map<String, dynamic>))
+                UserReservation.fromMap(doc.data()))
             .toList());
   }
 
@@ -136,7 +135,7 @@ DataRow recentFileDataRow(BuildContext context, UserReservation reservation) {
       DataCell(Text(reservation.size ?? 'Unknown Size')),
       DataCell(TextButton(
         onPressed: () {
-          openCameraAndScanMRZ(context);
+          uploadOrCaptureImage(context);
         },
         child: Text(
           "Check-In",
@@ -200,7 +199,8 @@ void showMoreInfoDialog(BuildContext context, UserReservation reservation) {
   );
 }
 
-void openCameraAndScanMRZ(BuildContext context) {
+//function for alert dialog for choosing the upload or camera
+void uploadOrCaptureImage(BuildContext context) {
   // Show an alert dialog with options
   showDialog(
     context: context,
@@ -229,6 +229,7 @@ void openCameraAndScanMRZ(BuildContext context) {
   );
 }
 
+//function for uploading the image when on the pc
 void _uploadImage() {
   // Create an HTML file input element
   html.FileUploadInputElement uploadInput = html.FileUploadInputElement()
@@ -237,7 +238,7 @@ void _uploadImage() {
   // Trigger the file input element to open the file selector
   uploadInput.click();
 
-  // Listen for changes (i.e., when a file is selected)
+  // Listen for changes
   uploadInput.onChange.listen((e) {
     final files = uploadInput.files;
     if (files != null && files.isNotEmpty) {
@@ -251,9 +252,8 @@ void _uploadImage() {
           final String base64String = reader.result as String;
           final String base64Content = base64String.split(',')[1];
 
-          // Send the image to the Microblink API or your backend
-          await sendImageToMicroblinkApi(
-              base64Content); // Or your own function for handling the image
+          // Send the image to the Microblink API
+          await sendImageToMicroblinkApi(base64Content);
         }
       });
     }
@@ -265,6 +265,7 @@ void _uploadImage() {
   });
 }
 
+//function for capturing an image when on the phone
 void _captureImage() {
   // Create an HTML file input element
   html.FileUploadInputElement input = html.FileUploadInputElement()
@@ -307,6 +308,7 @@ void _captureImage() {
   });
 }
 
+//function for sending the id to the mrz api
 Future<void> sendImageToMicroblinkApi(String base64Image) async {
   const String microblinkApiUrl =
       'https://api.microblink.com/v1/recognizers/mrtd';
@@ -344,7 +346,6 @@ Future<void> sendImageToMicroblinkApi(String base64Image) async {
       final data = jsonDecode(response.body);
       // Process the data
       print(data);
-      // TODO: Implement your logic to handle the scanned data.
       processScanResult(data);
     } else {
       print('Failed to scan MRZ: ${response.statusCode}');
@@ -354,29 +355,55 @@ Future<void> sendImageToMicroblinkApi(String base64Image) async {
   }
 }
 
-void processScanResult(Map<String, dynamic> scanResult) {
+//function for processing scan result
+void processScanResult(Map<String, dynamic> scanResult) async {
   // Extract information from the scanResult map
-  String firstName = scanResult['result']['firstName'] ?? 'Not available';
-  String lastName = scanResult['result']['lastName'] ?? 'Not available';
+  String firstName = formatFirstAndLastName(
+      scanResult['result']['firstName'] ?? 'Not available');
+  String lastName = formatFirstAndLastName(
+      scanResult['result']['lastName'] ?? 'Not available');
 
   // Assuming dateOfBirth is a map with day, month, and year keys
-  Map<String, dynamic> dobMap =
+  Map<String, dynamic> dateOfBirthMap =
       scanResult['result']['dateOfBirth'] as Map<String, dynamic>;
-  String dateOfBirth = "${dobMap['day']}/${dobMap['month']}/${dobMap['year']}";
+  String dateOfBirth =
+      "${dateOfBirthMap['day']}/${dateOfBirthMap['month']}/${dateOfBirthMap['year']}";
 
   // Same for dateOfExpiry
-  Map<String, dynamic> doeMap =
+  Map<String, dynamic> dateOfExpiryMap =
       scanResult['result']['dateOfExpiry'] as Map<String, dynamic>;
-  String dateOfExpiry = "${doeMap['day']}/${doeMap['month']}/${doeMap['year']}";
+  String dateOfExpiry =
+      "${dateOfExpiryMap['day']}/${dateOfExpiryMap['month']}/${dateOfExpiryMap['year']}";
 
   String nationality = scanResult['result']['nationality'] ?? 'Not available';
   String gender = scanResult['result']['sex'] ?? 'Not available';
 
-  // Call the function to show the confirmation dialog
-  showConfirmationDialog(
-      firstName, lastName, dateOfBirth, dateOfExpiry, nationality, gender);
+  // Find the reservation ID based on the unique identifier
+  QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+      .collection('UsersReservation')
+      .where('firstName', isEqualTo: firstName)
+      .where('lastName', isEqualTo: lastName)
+      .get();
+
+  if (querySnapshot.docs.isNotEmpty) {
+    String reservationId = querySnapshot.docs.first.id;
+    // Call the function to show the confirmation dialog
+    showConfirmationDialog(
+      firstName,
+      lastName,
+      dateOfBirth,
+      dateOfExpiry,
+      nationality,
+      gender,
+      reservationId,
+    );
+  } else {
+    displayMessage("FUCKING HELL ERROR");
+  }
+
 }
 
+//shows the comfirmation dialog after the mrz scan
 void showConfirmationDialog(
   String firstName,
   String lastName,
@@ -384,7 +411,7 @@ void showConfirmationDialog(
   String dateOfExpiry,
   String nationality,
   String gender,
-  // ...other parameters
+  String reservationId,
 ) {
   showDialog(
     context: navigatorKey.currentState!.context,
@@ -409,6 +436,7 @@ void showConfirmationDialog(
           TextButton(
             child: Text('Confirm'),
             onPressed: () {
+              updateCheckIn(reservationId);
               Navigator.of(context).pop();
             },
           ),
@@ -423,4 +451,40 @@ void showConfirmationDialog(
       );
     },
   );
+}
+
+//function that displays a message
+void displayMessage(String message) {
+  showDialog(
+      context: navigatorKey.currentState!.context,
+      builder: (context) => AlertDialog(
+            title: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(message),
+            ),
+          ));
+}
+
+//function that updates the reservation id with the checkedIn field to true
+void updateCheckIn(String reservationId) async {
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  DocumentReference reservationRef =
+      firestore.collection('UsersReservation').doc(reservationId);
+
+  try {
+    await reservationRef.update({'checkedIn': true});
+    displayMessage('Reservation check-in updated successfully');
+  } catch (e) {
+    displayMessage('Error updating reservation check-in: $e');
+  }
+}
+
+//function for formatting the mrz scan text
+String formatFirstAndLastName(String text) {
+  if (text.isEmpty) return text;
+  return text
+      .toLowerCase()
+      .split(' ')
+      .map((word) => word[0].toUpperCase() + word.substring(1))
+      .join(' ');
 }

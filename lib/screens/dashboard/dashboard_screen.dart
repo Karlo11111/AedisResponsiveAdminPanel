@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:admin/responsive.dart';
 import 'package:admin/screens/dashboard/components/my_reservations.dart';
 import 'package:admin/screens/dashboard/components/reservations_chart.dart';
