@@ -29,15 +29,10 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     );
     // Try signing in
     try {
-      UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
-              email: emailTextController.text,
-              password: passwordTextController.text);
-
       //getting the employee document
       DocumentSnapshot employeeDoc = await FirebaseFirestore.instance
           .collection('Employees')
-          .doc(userCredential.user!.email)
+          .doc(emailTextController.text)
           .get();
 
       if (!mounted) return;
@@ -48,7 +43,9 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
       Map<String, dynamic>? employeeData =
           employeeDoc.data() as Map<String, dynamic>?;
 
-      if (employeeData != null && employeeData["employee"] == 'admin') {
+      if (employeeData != null &&
+          employeeData["employee"] == 'Admin' &&
+          employeeData['password'] == passwordTextController.text) {
         // User is an admin, navigate to MainScreen
         Navigator.pushAndRemoveUntil(
           context,
@@ -88,9 +85,11 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
       children: [
         Center(
           child: Padding(
-            padding: Responsive.isDesktop(context)
-                ? EdgeInsets.symmetric(horizontal: 600)
-                : EdgeInsets.symmetric(horizontal: 100),
+            padding: Responsive.isMobile(context)
+                ? EdgeInsets.symmetric(
+                    horizontal: MediaQuery.sizeOf(context).width / 9)
+                : EdgeInsets.symmetric(
+                    horizontal: MediaQuery.sizeOf(context).width / 3),
             child: Container(
               padding:
                   EdgeInsets.only(top: 80, bottom: 80, right: 20, left: 20),
@@ -112,7 +111,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                   MyTextField(
                     controller: passwordTextController,
                     hintText: "Your Admin Password",
-                    obscureText: false,
+                    obscureText: true,
                   ),
 
                   SizedBox(height: defaultPadding),

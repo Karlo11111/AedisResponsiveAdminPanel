@@ -3,4 +3,6 @@ List<String> jobRoles = [
   'Pool Boy',
   'Concierge',
   'Bellhop',
+  'Admin',
 ];
+

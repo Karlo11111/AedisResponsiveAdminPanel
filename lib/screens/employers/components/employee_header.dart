@@ -1,6 +1,5 @@
 import 'package:admin/controllers/MenuAppController.dart';
 import 'package:admin/responsive.dart';
-import 'package:admin/screens/Authentication/authentiation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -8,15 +7,16 @@ import 'package:provider/provider.dart';
 
 import '../../../constants.dart';
 
-class Header extends StatefulWidget {
+class EmployeeHeader extends StatefulWidget {
   final String headerName;
-  const Header({Key? key, required this.headerName}) : super(key: key);
+  final Function()? onTap;
+  const EmployeeHeader({Key? key, required this.headerName, required this.onTap}) : super(key: key);
 
   @override
-  State<Header> createState() => _HeaderState();
+  State<EmployeeHeader> createState() => _HeaderState();
 }
 
-class _HeaderState extends State<Header> {
+class _HeaderState extends State<EmployeeHeader> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -35,18 +35,25 @@ class _HeaderState extends State<Header> {
           if (!Responsive.isMobile(context))
             Spacer(flex: Responsive.isDesktop(context) ? 2 : 1),
           Expanded(child: SearchField()),
-          ProfileCard()
+          ProfileCard(onTap: widget.onTap,)
         ],
       ),
     );
   }
 }
 
-class ProfileCard extends StatelessWidget {
+class ProfileCard extends StatefulWidget {
+  final Function()? onTap;
   const ProfileCard({
+    required this.onTap,
     Key? key,
   }) : super(key: key);
 
+  @override
+  State<ProfileCard> createState() => _ProfileCardState();
+}
+
+class _ProfileCardState extends State<ProfileCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -69,15 +76,17 @@ class ProfileCard extends StatelessWidget {
                   const EdgeInsets.symmetric(horizontal: defaultPadding / 2),
               child: GestureDetector(
                   onTap: () {
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AuthenticationScreen(),
-                        ));
+                    FirebaseAuth.instance.signOut();
                   },
-                  child: Text("Karlo Ciciliani")),
+                  child: TextButton(
+                    child: Text("Add Employee"),
+                    onPressed: widget.onTap,
+                  )),
             ),
-          Icon(Icons.keyboard_arrow_down),
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: widget.onTap,
+          ),
         ],
       ),
     );

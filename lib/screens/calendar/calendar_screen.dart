@@ -1,4 +1,6 @@
+import 'package:admin/constants.dart';
 import 'package:admin/screens/calendar/components/calendar_util.dart';
+import 'package:admin/screens/dashboard/components/header.dart';
 import 'package:flutter/material.dart';
 
 class CalendarScreen extends StatefulWidget {
@@ -15,6 +17,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
       body: SafeArea(
         child: Column(
           children: [
+            //header
+            Padding(
+              padding: const EdgeInsets.all(defaultPadding),
+              child: Header(headerName: "Calendar"),
+            ),
             //calendar
             Expanded(child: SingleChildScrollView(child: CalendarUtil()))
           ],
