@@ -134,7 +134,8 @@ class _CalendarUtilState extends State<CalendarUtil> {
                 // Return an empty container for subsequent events of the same room
                 : Container();
           },
-          events: allEvents, // Use the flattened list of events
+          events: allEvents, 
+          
         );
       },
     );

@@ -22,7 +22,6 @@ class EmployersPage extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
-          
           Padding(
               padding: const EdgeInsets.all(defaultPadding),
               child: EmployeeHeader(
@@ -32,32 +31,55 @@ class EmployersPage extends StatelessWidget {
                 },
               )),
           // Employee Grid
-          SizedBox(
-            width: double.infinity,
-            child: StreamBuilder<List<EmployeeModel>>(
-              stream: streamReservations(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: Text("Waiting for connection!"),
-                  );
-                }
-                if (snapshot.hasError) {
-                  print(
-                      "Error fetching data: ${snapshot.error}"); // Debugging line
-                  return Text("Error: ${snapshot.error}");
-                }
-                if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Text("No Data Available");
-                }
-                var employeeList = snapshot.data!;
+          Padding(
+            padding: const EdgeInsets.all(defaultPadding),
+            child: Container(
+              decoration: BoxDecoration(
+                color: secondaryColor,
+                borderRadius: const BorderRadius.all(Radius.circular(10)),
+              ),
+              child: SizedBox(
+                width: double.infinity,
+                child: StreamBuilder<List<EmployeeModel>>(
+                  stream: streamReservations(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(
+                        child: Text("Waiting for connection!"),
+                      );
+                    }
+                    if (snapshot.hasError) {
+                      print(
+                          "Error fetching data: ${snapshot.error}"); // Debugging line
+                      return Text("Error: ${snapshot.error}");
+                    }
+                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Text("No Data Available");
+                    }
+                    var employeeList = snapshot.data!;
 
-                //the data table for users reservations
-                return Responsive.isMobile(context) ||
-                        Responsive.isTablet(context)
-                    ? SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: DataTable(
+                    //the data table for users reservations
+                    return Responsive.isMobile(context) ||
+                            Responsive.isTablet(context)
+                        ? SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: DataTable(
+                                columnSpacing: defaultPadding,
+                                columns: [
+                                  DataColumn(label: Text("Full Name")),
+                                  DataColumn(label: Text("Email")),
+                                  DataColumn(label: Text("Employee Type")),
+                                  DataColumn(label: Text("Salary")),
+                                  DataColumn(label: Text("Phone Number")),
+                                  DataColumn(label: Text("Password")),
+                                  DataColumn(label: Text("Actions")),
+                                ],
+                                rows: employeeList
+                                    .map((reservation) =>
+                                        recentFileDataRow(context, reservation))
+                                    .toList()),
+                          )
+                        : DataTable(
                             columnSpacing: defaultPadding,
                             columns: [
                               DataColumn(label: Text("Full Name")),
@@ -71,24 +93,10 @@ class EmployersPage extends StatelessWidget {
                             rows: employeeList
                                 .map((reservation) =>
                                     recentFileDataRow(context, reservation))
-                                .toList()),
-                      )
-                    : DataTable(
-                        columnSpacing: defaultPadding,
-                        columns: [
-                          DataColumn(label: Text("Full Name")),
-                          DataColumn(label: Text("Email")),
-                          DataColumn(label: Text("Employee Type")),
-                          DataColumn(label: Text("Salary")),
-                          DataColumn(label: Text("Phone Number")),
-                          DataColumn(label: Text("Password")),
-                          DataColumn(label: Text("Actions")),
-                        ],
-                        rows: employeeList
-                            .map((reservation) =>
-                                recentFileDataRow(context, reservation))
-                            .toList());
-              },
+                                .toList());
+                  },
+                ),
+              ),
             ),
           ),
         ],
