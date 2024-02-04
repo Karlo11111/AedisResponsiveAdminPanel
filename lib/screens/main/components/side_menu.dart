@@ -42,7 +42,7 @@ class SideMenu extends StatelessWidget {
             selectedIndex: selectedIndex == 3,
           ),
           DrawerListTile(
-            title: "Upsells",
+            title: "Service Reservations",
             svgSrc: "assets/icons/menu_store.svg",
             press: () => onItemSelected(4),
             selectedIndex: selectedIndex == 4,

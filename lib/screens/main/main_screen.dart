@@ -5,6 +5,7 @@ import 'package:admin/responsive.dart';
 import 'package:admin/screens/dashboard/dashboard_screen.dart';
 import 'package:admin/screens/calendar/calendar_screen.dart';
 import 'package:admin/screens/employers/employers.dart';
+import 'package:admin/screens/service_reservations/service_reservations_screeen.dart';
 import 'package:admin/screens/tasks/tasks_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -37,6 +38,8 @@ class _MainScreenState extends State<MainScreen> {
         return TasksScreen();
       case 3:
         return EmployersPage();
+      case 4:
+        return ServiceReservationsScreeen();
       default:
         return DashboardScreen();
     }
