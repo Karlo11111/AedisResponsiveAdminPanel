@@ -14,6 +14,7 @@ class ServiceReservationsScreeen extends StatefulWidget {
       _ServiceReservationsScreeenState();
 }
 
+//enum for service type
 enum ServiceType { DivingSession, Massage, Spa }
 
 extension ServiceTypeExtension on ServiceType {
@@ -31,12 +32,52 @@ extension ServiceTypeExtension on ServiceType {
   }
 }
 
+//enum for dateRange
+enum DateRange { Now, ThreeDaysBefore, AWeekBefore }
+
+extension DateRangeExtension on DateRange {
+  String get rangeName {
+    switch (this) {
+      case DateRange.Now:
+        return 'Now';
+      case DateRange.ThreeDaysBefore:
+        return '3 Days Before';
+      case DateRange.AWeekBefore:
+        return 'A Week Before';
+      default:
+        return '';
+    }
+  }
+}
+
 class _ServiceReservationsScreeenState
     extends State<ServiceReservationsScreeen> {
   ServiceType? selectedServiceType;
 
+  DateRange? selectedDateRange;
+
+  //function for getting date from enum
+  DateTime _getStartDateForRange(DateRange? range) {
+    DateTime now = DateTime.now();
+    switch (range) {
+      case DateRange.Now:
+        return now;
+      case DateRange.ThreeDaysBefore:
+        return now.subtract(Duration(days: 3));
+      case DateRange.AWeekBefore:
+        return now.subtract(Duration(days: 7));
+      case null:
+      default:
+        // all time (past date such as 2000)
+        return DateTime(2000);
+    }
+  }
+
+  //function for fetching reservations (takes in account the enums for service and date choosing)
   Stream<List<ServiceReservationModel>> streamReservations(
-      ServiceType? selectedServiceType) {
+      ServiceType? selectedServiceType, DateRange? selectedDateRange) {
+    DateTime startDate = _getStartDateForRange(selectedDateRange);
+
     return FirebaseFirestore.instance
         .collection('AllUsersBooked')
         .snapshots()
@@ -54,16 +95,27 @@ class _ServiceReservationsScreeenState
               ServiceReservationModel reservation =
                   ServiceReservationModel.fromMap(appointmentMap);
 
-              // Use the updated typeName for comparison
-              if (selectedServiceType == null ||
-                  selectedServiceType.typeName == typeOfService) {
+              // Check for matching service type
+              bool matchesServiceType = selectedServiceType == null ||
+                  selectedServiceType.typeName == typeOfService;
+
+              // Parse the booking date
+              DateTime bookingDate =
+                  DateTime.parse(reservation.dateOfBooking.toString());
+
+              // Check if the booking date is after or equal to the start date for the range
+              bool matchesDateRange = bookingDate.isAfter(startDate) ||
+                  bookingDate.isAtSameMomentAs(startDate);
+
+              // Add the reservation if it matches both service type and date range
+              if (matchesServiceType && matchesDateRange) {
                 reservations.add(reservation);
               }
             }
           }
         }
 
-        // Add reservations based on the selected service type
+        // Add reservations based on the selected service type and date range
         addReservations(
             doc.data()['DivingSessionAppointments'] as List<dynamic>?,
             'Diving Session');
@@ -71,8 +123,15 @@ class _ServiceReservationsScreeenState
             doc.data()['MassageAppointments'] as List<dynamic>?, 'Massage');
         addReservations(doc.data()['SpaAppointments'] as List<dynamic>?, 'Spa');
       }
+
       // Sort reservations by DateOfBooking and then by Time
       reservations.sort((a, b) {
+        // Handle null dateOfBooking by treating nulls as "less than" any non-null date
+        if (a.dateOfBooking == null && b.dateOfBooking == null) return 0;
+        if (a.dateOfBooking == null) return 1;
+        if (b.dateOfBooking == null) return -1;
+
+        // At this point, we know both a.dateOfBooking and b.dateOfBooking are non-null due to the above checks
         int compareDate = a.dateOfBooking!.compareTo(b.dateOfBooking!);
         if (compareDate != 0) return compareDate;
 
@@ -85,6 +144,7 @@ class _ServiceReservationsScreeenState
           hour: int.parse(b.time!.split(":")[0]),
           minute: int.parse(b.time!.split(":")[1]),
         );
+
         // Compare TimeOfDay by converting to a double representing the time of day.
         double aTimeValue = aTime.hour + aTime.minute / 60.0;
         double bTimeValue = bTime.hour + bTime.minute / 60.0;
@@ -95,6 +155,7 @@ class _ServiceReservationsScreeenState
     });
   }
 
+  //dropdown menu for service choosing
   Widget _buildServiceTypeDropdown() {
     List<DropdownMenuItem<ServiceType?>> dropdownItems = [
       DropdownMenuItem<ServiceType?>(
@@ -128,6 +189,40 @@ class _ServiceReservationsScreeenState
     );
   }
 
+  //dropdown menu for date choosing
+  Widget _buildDateRangeDropdown() {
+    List<DropdownMenuItem<DateRange?>> dropdownItems = [
+      DropdownMenuItem<DateRange?>(
+        // null value represents "All Time"
+        value: null,
+        child: Text("All Time"),
+      ),
+    ];
+
+    dropdownItems.addAll(DateRange.values.map((DateRange value) {
+      return DropdownMenuItem<DateRange>(
+        value: value,
+        child: Text(value.rangeName),
+      );
+    }).toList());
+
+    return DropdownButton<DateRange?>(
+      value: selectedDateRange,
+      hint: Text("Select Date Range"),
+      icon: Icon(Icons.arrow_downward),
+      underline: Container(
+        height: 1.7,
+        color: primaryColor,
+      ),
+      onChanged: (DateRange? newValue) {
+        setState(() {
+          selectedDateRange = newValue;
+        });
+      },
+      items: dropdownItems,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -140,7 +235,7 @@ class _ServiceReservationsScreeenState
                   headerName: "Service Reservations",
                 )),
 
-            // Employee Grid
+            // service reservations grid
             Padding(
               padding: const EdgeInsets.all(defaultPadding),
               child: Container(
@@ -151,7 +246,8 @@ class _ServiceReservationsScreeenState
                 child: SizedBox(
                   width: double.infinity,
                   child: StreamBuilder<List<ServiceReservationModel>>(
-                    stream: streamReservations(selectedServiceType),
+                    stream: streamReservations(
+                        selectedServiceType, selectedDateRange),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Center(
@@ -159,8 +255,8 @@ class _ServiceReservationsScreeenState
                         );
                       }
                       if (snapshot.hasError) {
-                        print(
-                            "Error fetching data: ${snapshot.error}"); // Debugging line
+                        // Debugging line
+                        print("Error fetching data: ${snapshot.error}");
                         return Text("Error: ${snapshot.error}");
                       }
                       if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -186,7 +282,15 @@ class _ServiceReservationsScreeenState
                                       _buildServiceTypeDropdown(),
                                     ],
                                   )),
-                                  DataColumn(label: Text("Date of Booking")),
+                                  DataColumn(
+                                      label: Row(
+                                    children: [
+                                      Text("Date of Booking"),
+                                      SizedBox(width: 15),
+                                      //the function for dropdown choosing of service
+                                      _buildDateRangeDropdown(),
+                                    ],
+                                  )),
                                   DataColumn(label: Text("Time of service")),
                                   DataColumn(label: Text("Service Price")),
                                   DataColumn(label: Text("Actions")),
@@ -209,7 +313,15 @@ class _ServiceReservationsScreeenState
                                     _buildServiceTypeDropdown(),
                                   ],
                                 )),
-                                DataColumn(label: Text("Date of Booking")),
+                                DataColumn(
+                                    label: Row(
+                                  children: [
+                                    Text("Date of Booking"),
+                                    SizedBox(width: 15),
+                                    //the function for dropdown choosing of service
+                                    _buildDateRangeDropdown(),
+                                  ],
+                                )),
                                 DataColumn(label: Text("Time of service")),
                                 DataColumn(label: Text("Service Price")),
                                 DataColumn(label: Text("Actions")),
@@ -243,7 +355,6 @@ DataRow recentFileDataRow(BuildContext context, ServiceReservationModel model) {
       DataCell(Text(model.servicePrice != null
           ? model.servicePrice!.toStringAsFixed(2)
           : 'No Price')),
-      // Add other cells for other attributes
       DataCell(
         Row(
           children: [

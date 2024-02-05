@@ -180,6 +180,8 @@ void showMoreInfoDialog(BuildContext context, UserReservation reservation) {
               Text("Guests account password: ${reservation.password}"),
               SizedBox(height: defaultPadding),
               Text("Guests room number: ${reservation.roomNumber}"),
+              SizedBox(height: defaultPadding),
+              Text("Is checked in: ${reservation.isCheckedIn}"),
             ],
           ),
         ),

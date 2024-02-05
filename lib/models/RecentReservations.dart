@@ -7,8 +7,10 @@ class UserReservation {
   final Timestamp? checkOutDate;
   final String? adults, children, email, phone, password;
   final String? roomNumber;
+  final bool? isCheckedIn;
 
   UserReservation({
+    this.isCheckedIn,
     this.roomNumber,
     this.adults,
     this.children,
@@ -21,7 +23,7 @@ class UserReservation {
     this.size,
     this.checkOutDate,
   });
-  
+
   //getting all data from firebase
   factory UserReservation.fromMap(Map<String, dynamic> data) {
     return UserReservation(
@@ -35,6 +37,7 @@ class UserReservation {
       email: data['email'] ?? "No Email",
       phone: data['phone'] ?? "No Phone",
       roomNumber: data['roomNumber'] ?? "",
+      isCheckedIn: data['checkedIn'] ?? false,
     );
   }
   //check in date

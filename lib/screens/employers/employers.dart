@@ -4,6 +4,7 @@ import 'package:admin/models/all_jobs.dart';
 import 'package:admin/responsive.dart';
 import 'package:admin/screens/employers/components/employee_header.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -269,7 +270,8 @@ void showAddEmployeeDialog(BuildContext context) {
                   phoneNumber: _phoneNumberController.text,
                   password: _passwordController.text,
                 );
-                addEmployeeToFirebase(newEmployee);
+
+                addEmployeeToFirebase(newEmployee, _passwordController.text);
                 Navigator.of(context).pop();
               } else {
                 // Handle the case where not all fields are filled
@@ -423,18 +425,39 @@ void updateEmployeeInFirebase(EmployeeModel updatedEmployee) {
       .catchError((e) => print(e));
 }
 
-void addEmployeeToFirebase(EmployeeModel newEmployee) {
+void addEmployeeToFirebase(EmployeeModel newEmployee, String password) async {
   if (newEmployee.email == null || newEmployee.email!.isEmpty) {
     print('Cannot save employee without an email');
     return;
   }
 
-  String documentId = newEmployee.email!;
+ 
+  try {
+    // Create the user in Firebase Auth
+    UserCredential userCredential =
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      email: newEmployee.email!,
+      password: password,
+    );
 
-  FirebaseFirestore.instance
-      .collection('Employees')
-      .doc(documentId)
-      .set(newEmployee.toMap())
-      .then((_) => print('Employee added with email: $documentId'))
-      .catchError((e) => print(e));
+    // If the user is successfully created, then add the employee details to Firestore
+    if (userCredential.user != null) {
+      String documentId = newEmployee.email!;
+
+      FirebaseFirestore.instance
+          .collection('Employees')
+          .doc(documentId)
+          .set(newEmployee.toMap())
+          .then((_) => print('Employee added with email: $documentId'))
+          .catchError((e) => print(e));
+    }
+  } on FirebaseAuthException catch (e) {
+    if (e.code == 'weak-password') {
+      print('The password provided is too weak.');
+    } else if (e.code == 'email-already-in-use') {
+      print('The account already exists for that email.');
+    }
+  } catch (e) {
+    print(e);
+  }
 }

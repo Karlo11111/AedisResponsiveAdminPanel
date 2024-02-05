@@ -81,7 +81,7 @@ class ActivityOverview extends StatelessWidget {
                         svgSrc: getIconPath(booking[
                             'Type']), // Implement this function based on type
                         title:
-                            "${booking['Type']} Booking by ${booking['Name']}",
+                            "${getShortServiceName(booking['Type'])} booked by ${booking['Name']}",
                       ))
                   .toList(),
             ],
@@ -101,6 +101,19 @@ class ActivityOverview extends StatelessWidget {
         return "assets/icons/diving.svg";
       default:
         return "assets/icons/unknown.svg";
+    }
+  }
+
+  String getShortServiceName(String type) {
+    switch (type) {
+      case 'MassageAppointments':
+        return "Massage";
+      case 'SpaAppointments':
+        return "Spa";
+      case 'DivingSessionAppointments':
+        return "Diving";
+      default:
+        return "Unknown";
     }
   }
 }
