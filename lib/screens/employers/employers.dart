@@ -199,7 +199,7 @@ void showAddEmployeeDialog(BuildContext context) {
           builder: (BuildContext context, StateSetter setState) {
             return SingleChildScrollView(
               child: ListBody(
-                children: <Widget>[
+                children: [
                   TextField(
                     controller: _nameController,
                     decoration: InputDecoration(hintText: "Full Name"),

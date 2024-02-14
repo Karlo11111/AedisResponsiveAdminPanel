@@ -2,6 +2,7 @@
 
 import 'package:admin/controllers/MenuAppController.dart';
 import 'package:admin/responsive.dart';
+import 'package:admin/screens/check_in_screen/check_in.dart';
 import 'package:admin/screens/dashboard/dashboard_screen.dart';
 import 'package:admin/screens/calendar/calendar_screen.dart';
 import 'package:admin/screens/employers/employers.dart';
@@ -40,6 +41,9 @@ class _MainScreenState extends State<MainScreen> {
         return EmployersPage();
       case 4:
         return ServiceReservationsScreeen();
+      case 5:
+        return CheckedInScreen();
+        
       default:
         return DashboardScreen();
     }

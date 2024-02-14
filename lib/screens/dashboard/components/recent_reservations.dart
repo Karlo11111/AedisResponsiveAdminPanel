@@ -29,8 +29,7 @@ class _RecentReservationsState extends State<RecentReservations> {
         .collection('UsersReservation')
         .snapshots()
         .map((snapshot) => snapshot.docs
-            .map((doc) =>
-                UserReservation.fromMap(doc.data()))
+            .map((doc) => UserReservation.fromMap(doc.data()))
             .toList());
   }
 
@@ -119,6 +118,7 @@ class _RecentReservationsState extends State<RecentReservations> {
 }
 
 DataRow recentFileDataRow(BuildContext context, UserReservation reservation) {
+  bool isCheckedIn = reservation.isCheckedIn!;
   return DataRow(
     cells: [
       DataCell(
@@ -133,15 +133,25 @@ DataRow recentFileDataRow(BuildContext context, UserReservation reservation) {
       ),
       DataCell(Text(reservation.getFormattedCheckInDate())),
       DataCell(Text(reservation.size ?? 'Unknown Size')),
-      DataCell(TextButton(
+      DataCell(isCheckedIn
+          ? TextButton(
+              onPressed: () {},
+              //here is the check in button
+              child: Text(
+                "User is already checked-in",
+                style: TextStyle(color: primaryColor),
+              ),
+            )
+          : TextButton(
         onPressed: () {
           uploadOrCaptureImage(context);
         },
+              //here is the check in button
         child: Text(
           "Check-In",
           style: TextStyle(color: primaryColor),
         ),
-      )),
+            )),
       DataCell(IconButton(
         onPressed: () => showMoreInfoDialog(context, reservation),
         icon: Icon(Icons.more_horiz),
@@ -402,7 +412,6 @@ void processScanResult(Map<String, dynamic> scanResult) async {
   } else {
     displayMessage("FUCKING HELL ERROR");
   }
-
 }
 
 //shows the comfirmation dialog after the mrz scan

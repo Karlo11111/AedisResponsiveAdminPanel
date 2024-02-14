@@ -6,15 +6,16 @@ import 'package:provider/provider.dart';
 
 import '../../../constants.dart';
 
-class Header extends StatefulWidget {
-  final String headerName;
-  const Header({Key? key, required this.headerName}) : super(key: key);
+class CheckedInHeader extends StatefulWidget {
+  final String CheckedInHeaderName;
+  const CheckedInHeader({Key? key, required this.CheckedInHeaderName})
+      : super(key: key);
 
   @override
-  State<Header> createState() => _HeaderState();
+  State<CheckedInHeader> createState() => _CheckedInHeaderState();
 }
 
-class _HeaderState extends State<Header> {
+class _CheckedInHeaderState extends State<CheckedInHeader> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -27,12 +28,11 @@ class _HeaderState extends State<Header> {
             ),
           if (!Responsive.isMobile(context))
             Text(
-              widget.headerName,
+              widget.CheckedInHeaderName,
               style: Theme.of(context).textTheme.titleLarge,
             ),
           if (!Responsive.isMobile(context))
             Spacer(flex: Responsive.isDesktop(context) ? 2 : 1),
-          Expanded(child: SearchField()),
           ProfileCard()
         ],
       ),
@@ -77,48 +77,6 @@ class ProfileCard extends StatelessWidget {
             ),
           Icon(Icons.keyboard_arrow_down),
         ],
-      ),
-    );
-  }
-}
-
-class SearchField extends StatelessWidget {
-  final ValueChanged<String>? onChanged;
-  final TextEditingController? controller;
-
-  const SearchField({
-    Key? key,
-    this.onChanged,
-    this.controller,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      onChanged: onChanged,
-      controller: controller,
-      decoration: InputDecoration(
-        hintText: "Search",
-        fillColor: secondaryColor,
-        filled: true,
-        border: OutlineInputBorder(
-          borderSide: BorderSide.none,
-          borderRadius: const BorderRadius.all(Radius.circular(10)),
-        ),
-        suffixIcon: InkWell(
-          onTap: () {
-            onChanged!(controller!.text);
-          },
-          child: Container(
-            padding: EdgeInsets.all(defaultPadding * 0.75),
-            margin: EdgeInsets.symmetric(horizontal: defaultPadding / 2),
-            decoration: BoxDecoration(
-              color: primaryColor,
-              borderRadius: const BorderRadius.all(Radius.circular(10)),
-            ),
-            child: Icon(Icons.search), // Changed to Icon for simplicity
-          ),
-        ),
       ),
     );
   }

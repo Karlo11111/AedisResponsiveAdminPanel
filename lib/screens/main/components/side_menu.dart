@@ -30,6 +30,12 @@ class SideMenu extends StatelessWidget {
             selectedIndex: selectedIndex == 1,
           ),
           DrawerListTile(
+            title: "Checked In Guests",
+            svgSrc: "assets/icons/menu_doc.svg",
+            press: () => onItemSelected(5),
+            selectedIndex: selectedIndex == 5,
+          ),
+          DrawerListTile(
             title: "Tasks",
             svgSrc: "assets/icons/tasks1.svg",
             press: () => onItemSelected(2),
@@ -47,29 +53,18 @@ class SideMenu extends StatelessWidget {
             press: () => onItemSelected(4),
             selectedIndex: selectedIndex == 4,
           ),
+          
           DrawerListTile(
-            title: "Reservations",
-            svgSrc: "assets/icons/menu_doc.svg",
-            press: () => onItemSelected(5),
-            selectedIndex: selectedIndex == 5,
-          ),
-          DrawerListTile(
-            title: "Communications",
-            svgSrc: "assets/icons/menu_notification.svg",
+            title: "Support",
+            svgSrc: "assets/icons/menu_profile.svg",
             press: () => onItemSelected(6),
             selectedIndex: selectedIndex == 6,
           ),
           DrawerListTile(
-            title: "Support",
-            svgSrc: "assets/icons/menu_profile.svg",
-            press: () => onItemSelected(7),
-            selectedIndex: selectedIndex == 7,
-          ),
-          DrawerListTile(
             title: "Settings",
             svgSrc: "assets/icons/menu_setting.svg",
-            press: () => onItemSelected(8),
-            selectedIndex: selectedIndex == 8,
+            press: () => onItemSelected(7),
+            selectedIndex: selectedIndex == 7,
           ),
         ],
       ),
