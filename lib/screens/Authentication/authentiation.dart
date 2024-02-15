@@ -25,7 +25,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     // Show loading circle
     showDialog(
       context: context,
-      builder: (context) => Center(),
+      builder: (context) => Center(child: CircularProgressIndicator()),
     );
     // Try signing in
     try {
@@ -79,61 +79,84 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SafeArea(
-            child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Center(
-          child: Padding(
-            padding: Responsive.isMobile(context)
-                ? EdgeInsets.symmetric(
-                    horizontal: MediaQuery.sizeOf(context).width / 9)
-                : EdgeInsets.symmetric(
-                    horizontal: MediaQuery.sizeOf(context).width / 3),
-            child: Container(
-              padding:
-                  EdgeInsets.only(top: 80, bottom: 80, right: 20, left: 20),
-              decoration: BoxDecoration(
-                  color: secondaryColor,
-                  borderRadius: BorderRadius.circular(defaultPadding)),
+        body: Container(
+      decoration: BoxDecoration(
+          image: DecorationImage(
+              image: NetworkImage(
+                  "https://i.ibb.co/x1f0yp2/background-Image-Login.jpg"),
+              fit: BoxFit.cover),
+          borderRadius: BorderRadius.circular(16)),
+      child: SafeArea(
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Center(
+            child: Padding(
+              padding: Responsive.isMobile(context)
+                  ? EdgeInsets.symmetric(
+                      horizontal: MediaQuery.sizeOf(context).width / 9)
+                  : EdgeInsets.symmetric(
+                      horizontal: MediaQuery.sizeOf(context).width / 2.85),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  //sign in text
-
-                  //text fields
-                  MyTextField(
-                    controller: emailTextController,
-                    hintText: "Your Admin Email",
-                    obscureText: false,
+                  Text(
+                    "Aedis",
+                    style: TextStyle(
+                        fontSize: 45, color: Color.fromRGBO(38, 151, 255, 1)),
                   ),
-                  SizedBox(height: defaultPadding),
-                  MyTextField(
-                    controller: passwordTextController,
-                    hintText: "Your Admin Password",
-                    obscureText: true,
+                  Text(
+                    "The hotel of your dreams.",
+                    style: TextStyle(
+                        fontSize: 20, color: Color.fromRGBO(38, 151, 255, 1)),
                   ),
+                  SizedBox(height: 25),
+                  Container(
+                    padding: EdgeInsets.only(
+                        top: 50, bottom: 50, right: 50, left: 50),
+                    decoration: BoxDecoration(
+                        color: Color.fromRGBO(68, 77, 132, 1),
+                        borderRadius: BorderRadius.circular(defaultPadding)),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        //text fields
+                        MyTextField(
+                          borderColor: Color.fromRGBO(53, 61, 121, 1),
+                          controller: emailTextController,
+                          hintText: "Email",
+                          obscureText: false,
+                        ),
+                        SizedBox(height: 25),
+                        MyTextField(
+                          borderColor: Color.fromRGBO(53, 61, 121, 1),
+                          controller: passwordTextController,
+                          hintText: "Password",
+                          obscureText: true,
+                        ),
 
-                  SizedBox(height: defaultPadding),
+                        SizedBox(height: 25),
 
-                  //continue button
-                  MyButton(
-                    buttonText: "Sign in",
-                    ontap: SignIn,
-                    height: 50,
-                    width: double.infinity,
-                    decorationColor: primaryColor,
-                    borderColor: Colors.white,
-                    textColor: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  )
+                        //continue button
+                        MyButton(
+                          buttonText: "Sign in",
+                          ontap: SignIn,
+                          height: 50,
+                          width: 250,
+                          decorationColor: primaryColor,
+                          borderColor: Colors.transparent,
+                          textColor: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        )
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
-          ),
-        )
-      ],
-    )));
+          )
+        ],
+      )),
+    ));
   }
 }

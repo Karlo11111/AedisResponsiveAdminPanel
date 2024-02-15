@@ -75,7 +75,16 @@ class ProfileCard extends StatelessWidget {
                   },
                   child: Text("Karlo Ciciliani")),
             ),
-          Icon(Icons.keyboard_arrow_down),
+          IconButton(
+            icon: Icon(Icons.keyboard_arrow_down),
+            onPressed: () {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AuthenticationScreen(),
+                  ));
+            },
+          ),
         ],
       ),
     );
