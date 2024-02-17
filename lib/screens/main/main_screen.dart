@@ -4,9 +4,10 @@ import 'package:admin/controllers/MenuAppController.dart';
 import 'package:admin/responsive.dart';
 import 'package:admin/screens/check_in_screen/check_in.dart';
 import 'package:admin/screens/dashboard/dashboard_screen.dart';
-import 'package:admin/screens/calendar/calendar_screen.dart';
+
 import 'package:admin/screens/employers/employers.dart';
 import 'package:admin/screens/service_reservations/service_reservations_screeen.dart';
+import 'package:admin/screens/settings/SettingsScreen.dart';
 import 'package:admin/screens/support/support.dart';
 import 'package:admin/screens/tasks/tasks_screen.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +36,8 @@ class _MainScreenState extends State<MainScreen> {
       case 0:
         return DashboardScreen();
       case 1:
-        return CalendarScreen();
+        //calendar screen
+        return TasksScreen();
       case 2:
         return TasksScreen();
       case 3:
@@ -46,6 +48,8 @@ class _MainScreenState extends State<MainScreen> {
         return CheckedInScreen();
       case 6:
         return SupportScreen();
+      case 7:
+        return SettingsScreen();
       default:
         return DashboardScreen();
     }

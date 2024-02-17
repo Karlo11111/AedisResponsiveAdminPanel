@@ -5,19 +5,20 @@ import 'package:admin/screens/Authentication/authentiation.dart';
 import 'package:admin/screens/authentication/components/auth_service.dart';
 import 'package:admin/screens/dashboard/components/recent_reservations.dart';
 import 'package:admin/screens/main/main_screen.dart';
+import 'package:admin/theme/theme_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(MyApp());
+  runApp(ChangeNotifierProvider(
+      create: (context) => ThemeProvider(), child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -49,8 +50,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-
-
 class AuthenticationWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -66,7 +65,7 @@ class AuthenticationWrapper extends StatelessWidget {
           }
           return MainScreen();
         }
-        return Center(); 
+        return Center();
       },
     );
   }
