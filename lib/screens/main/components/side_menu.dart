@@ -1,3 +1,5 @@
+import 'package:admin/constants.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -54,7 +56,7 @@ class SideMenu extends StatelessWidget {
             selectedIndex: selectedIndex == 4,
           ),
           
-          DrawerListTile(
+          SupportDrawerListTile(
             title: "Support",
             svgSrc: "assets/icons/menu_profile.svg",
             press: () => onItemSelected(6),
@@ -106,6 +108,92 @@ class DrawerListTile extends StatelessWidget {
           style: TextStyle(color: Colors.white54),
         ),
       ),
+    );
+  }
+}
+
+class SupportDrawerListTile extends StatelessWidget {
+  const SupportDrawerListTile({
+    Key? key,
+    required this.title,
+    required this.svgSrc,
+    required this.press,
+    required this.selectedIndex,
+  }) : super(key: key);
+
+  final String title, svgSrc;
+  final VoidCallback press;
+  final bool selectedIndex;
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection('Help').snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.hasError) {
+          return Text('Something went wrong');
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return ListTile(
+            title: Text(title),
+            leading: CircularProgressIndicator(),
+          );
+        }
+
+        // Assuming you want to count the number of documents in the 'Help' collection
+        int documentCount = snapshot.data?.docs.length ?? 0;
+
+        return Container(
+          decoration: BoxDecoration(
+            border: selectedIndex
+                ? Border(left: BorderSide(width: 5, color: Colors.white))
+                : null,
+          ),
+          child: ListTile(
+            onTap: press,
+            horizontalTitleGap: 0.0,
+            leading: SvgPicture.asset(
+              svgSrc,
+              colorFilter: ColorFilter.mode(Colors.white54, BlendMode.srcIn),
+              height: 16,
+            ),
+            selected: selectedIndex,
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(color: Colors.white54),
+                ),
+                SizedBox(
+                  width: 15,
+                ),
+                if (documentCount > 0)
+                  Container(
+                    padding: EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      color: primaryColor,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    constraints: BoxConstraints(
+                      minWidth: 18,
+                      minHeight: 18,
+                    ),
+                    child: Text(
+                      '$documentCount',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

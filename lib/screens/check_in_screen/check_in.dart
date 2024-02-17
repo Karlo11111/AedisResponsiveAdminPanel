@@ -69,7 +69,7 @@ class _CheckedInScreenState extends State<CheckedInScreen> {
         .listen((snapshot) {
       var reservations = snapshot.docs
           .map((doc) =>
-              CheckedInModel.fromMap(doc.data() as Map<String, dynamic>))
+              CheckedInModel.fromMap(doc.data()))
           .toList();
 
       setState(() {

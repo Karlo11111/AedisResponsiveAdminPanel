@@ -5,7 +5,6 @@ import 'package:admin/responsive.dart';
 import 'package:admin/screens/employers/components/employee_header.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class EmployersPage extends StatelessWidget {
