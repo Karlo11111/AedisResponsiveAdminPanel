@@ -15,9 +15,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Responsive.isDesktop(context)
-          ? _buildDesktopLayout(context)
-          : _buildMobileLayout(context),
+      body: SingleChildScrollView(
+        // Wrap with SingleChildScrollView
+        child: Responsive.isDesktop(context)
+            ? _buildDesktopLayout(context)
+            : _buildMobileLayout(context),
+      ),
     );
   }
 }
@@ -26,7 +29,7 @@ Widget _buildMobileLayout(BuildContext context) {
   bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
   return Column(
     children: [
-      //dark mode toggle
+      // dark mode toggle
       SettingSwitch(
         value: isDarkMode,
         title: "Dark theme",
@@ -46,15 +49,18 @@ Widget _buildDesktopLayout(BuildContext context) {
 
   return Row(
     children: [
-      SettingSwitch(
-        value: isDarkMode,
-        title: "Dark theme",
-        icon: Icons.dark_mode,
-        bgColor: Theme.of(context).colorScheme.secondary,
-        iconColor: Theme.of(context).colorScheme.secondary,
-        onTap: (value) {
-          Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
-        },
+      Expanded(
+        // Wrap SettingSwitch with Expanded
+        child: SettingSwitch(
+          value: isDarkMode,
+          title: "Dark theme",
+          icon: Icons.dark_mode,
+          bgColor: Theme.of(context).colorScheme.secondary,
+          iconColor: Theme.of(context).colorScheme.secondary,
+          onTap: (value) {
+            Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
+          },
+        ),
       ),
     ],
   );
