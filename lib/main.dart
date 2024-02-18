@@ -61,7 +61,7 @@ class AuthenticationWrapper extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.active) {
           User? user = snapshot.data;
           if (user == null) {
-            return MainScreen();
+            return AuthenticationScreen();
           }
           return MainScreen();
         }

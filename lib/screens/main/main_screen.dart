@@ -2,6 +2,7 @@
 
 import 'package:admin/controllers/MenuAppController.dart';
 import 'package:admin/responsive.dart';
+import 'package:admin/screens/calendar/calendar_screen.dart';
 import 'package:admin/screens/check_in_screen/check_in.dart';
 import 'package:admin/screens/dashboard/dashboard_screen.dart';
 
@@ -36,8 +37,7 @@ class _MainScreenState extends State<MainScreen> {
       case 0:
         return DashboardScreen();
       case 1:
-        //calendar screen
-        return TasksScreen();
+        return CalendarScreen();
       case 2:
         return TasksScreen();
       case 3:
