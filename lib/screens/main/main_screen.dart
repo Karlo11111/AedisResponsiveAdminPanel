@@ -8,7 +8,6 @@ import 'package:admin/screens/dashboard/dashboard_screen.dart';
 
 import 'package:admin/screens/employers/employers.dart';
 import 'package:admin/screens/service_reservations/service_reservations_screeen.dart';
-import 'package:admin/screens/settings/SettingsScreen.dart';
 import 'package:admin/screens/support/support.dart';
 import 'package:admin/screens/tasks/tasks_screen.dart';
 import 'package:flutter/material.dart';
@@ -48,8 +47,7 @@ class _MainScreenState extends State<MainScreen> {
         return CheckedInScreen();
       case 6:
         return SupportScreen();
-      case 7:
-        return SettingsScreen();
+      
       default:
         return DashboardScreen();
     }

@@ -102,7 +102,9 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                   Text(
                     "Aedis",
                     style: TextStyle(
-                        fontSize: 45, color: Color.fromRGBO(38, 151, 255, 1)),
+                        fontWeight: FontWeight.w800,
+                        fontSize: 45,
+                        color: Color.fromRGBO(38, 151, 255, 1)),
                   ),
                   Text(
                     "The hotel of your dreams.",
