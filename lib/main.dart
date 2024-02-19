@@ -20,35 +20,48 @@ void main() async {
   runApp(ChangeNotifierProvider(
       create: (context) => ThemeProvider(), child: MyApp()));
 }
-
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        Provider<AuthService>(
-          create: (_) => AuthService(),
+    return Consumer<ThemeProvider>(
+      // Use Consumer to listen to ThemeProvider changes
+      builder: (context, themeProvider, child) => MultiProvider(
+        providers: [
+          Provider<AuthService>(
+            create: (_) => AuthService(),
+          ),
+          ChangeNotifierProvider<MenuAppController>(
+            create: (_) => MenuAppController(),
+          ),
+        ],
+        child: MaterialApp(
+          navigatorKey: navigatorKey,
+          debugShowCheckedModeBanner: false,
+          title: 'Flutter Admin Panel',
+          theme: themeProvider.isDarkMode
+              ? ThemeData.dark().copyWith(
+                  scaffoldBackgroundColor: bgColor,
+                  textTheme:
+                      GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme)
+                          .apply(bodyColor: Colors.white),
+                  canvasColor: secondaryColor,
+                )
+              : ThemeData.light().copyWith(
+                  scaffoldBackgroundColor:
+                      lightBgColor, // Define a light background color
+                  textTheme:
+                      GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme)
+                          .apply(bodyColor: Colors.black),
+                  canvasColor:
+                      lightSecondaryColor, // Define a light secondary color
+                ),
+          home: AuthenticationWrapper(),
         ),
-        ChangeNotifierProvider<MenuAppController>(
-          create: (_) => MenuAppController(),
-        ),
-      ],
-      child: MaterialApp(
-        navigatorKey: navigatorKey,
-        debugShowCheckedModeBanner: false,
-        title: 'Flutter Admin Panel',
-        theme: ThemeData.dark().copyWith(
-          scaffoldBackgroundColor: bgColor,
-          textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme)
-              .apply(bodyColor: Colors.white),
-          canvasColor: secondaryColor,
-        ),
-        home: AuthenticationWrapper(),
       ),
     );
   }
 }
+
 
 class AuthenticationWrapper extends StatelessWidget {
   @override
@@ -61,7 +74,7 @@ class AuthenticationWrapper extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.active) {
           User? user = snapshot.data;
           if (user == null) {
-            return AuthenticationScreen();
+            return MainScreen();
           }
           return MainScreen();
         }

@@ -33,12 +33,22 @@ class _RecentReservationsState extends State<RecentReservations> {
             .toList());
   }
 
+  
+
   @override
   Widget build(BuildContext context) {
+    Color backgroundColor = Theme.of(context).brightness == Brightness.dark
+        ? secondaryColor
+        : lightSecondaryColor;
+
+    Color mainPrimaryTextColor = Theme.of(context).brightness == Brightness.dark
+        ? lightTextColor
+        : lightTextColor;
+
     return Container(
       padding: EdgeInsets.all(defaultPadding),
       decoration: BoxDecoration(
-        color: secondaryColor,
+        color: backgroundColor,
         borderRadius: const BorderRadius.all(Radius.circular(10)),
       ),
       child: Column(
@@ -46,7 +56,7 @@ class _RecentReservationsState extends State<RecentReservations> {
         children: [
           Text(
             "Recent Reservations",
-            style: Theme.of(context).textTheme.titleMedium,
+            style: TextStyle(color: mainPrimaryTextColor),
           ),
           SizedBox(
             width: double.infinity,
@@ -82,11 +92,26 @@ class _RecentReservationsState extends State<RecentReservations> {
                         child: DataTable(
                           columnSpacing: defaultPadding,
                           columns: [
-                            DataColumn(label: Text("Full Name")),
-                            DataColumn(label: Text("Check-in Date")),
-                            DataColumn(label: Text("Country")),
-                            DataColumn(label: Text("Check-In")),
-                            DataColumn(label: Text("More Info")),
+                            DataColumn(
+                                label: Text("Full Name",
+                                    style: TextStyle(
+                                        color: mainPrimaryTextColor))),
+                            DataColumn(
+                                label: Text("Check-in Date",
+                                    style: TextStyle(
+                                        color: mainPrimaryTextColor))),
+                            DataColumn(
+                                label: Text("Country",
+                                    style: TextStyle(
+                                        color: mainPrimaryTextColor))),
+                            DataColumn(
+                                label: Text("Check-In",
+                                    style: TextStyle(
+                                        color: mainPrimaryTextColor))),
+                            DataColumn(
+                                label: Text("More Info",
+                                    style: TextStyle(
+                                        color: mainPrimaryTextColor))),
                           ],
                           rows: reservations
                               .map((reservation) =>
@@ -97,11 +122,26 @@ class _RecentReservationsState extends State<RecentReservations> {
                     : DataTable(
                         columnSpacing: defaultPadding,
                         columns: [
-                          DataColumn(label: Text("Full Name")),
-                          DataColumn(label: Text("Check-in Date")),
-                          DataColumn(label: Text("Country")),
-                          DataColumn(label: Text("Check-In")),
-                          DataColumn(label: Text("More Info")),
+                          DataColumn(
+                              label: Text("Full Name",
+                                  style:
+                                      TextStyle(color: mainPrimaryTextColor))),
+                          DataColumn(
+                              label: Text("Check-in Date",
+                                  style:
+                                      TextStyle(color: mainPrimaryTextColor))),
+                          DataColumn(
+                              label: Text("Country",
+                                  style:
+                                      TextStyle(color: mainPrimaryTextColor))),
+                          DataColumn(
+                              label: Text("Check-In",
+                                  style:
+                                      TextStyle(color: mainPrimaryTextColor))),
+                          DataColumn(
+                              label: Text("More Info",
+                                  style:
+                                      TextStyle(color: mainPrimaryTextColor))),
                         ],
                         rows: reservations
                             .map((reservation) =>
@@ -119,6 +159,15 @@ class _RecentReservationsState extends State<RecentReservations> {
 
 DataRow recentFileDataRow(BuildContext context, UserReservation reservation) {
   bool isCheckedIn = reservation.isCheckedIn!;
+  
+  Color mainPrimaryColor = Theme.of(context).brightness == Brightness.dark
+      ? primaryColor
+      : lightPrimaryColor;
+
+  Color mainPrimaryTextColor = Theme.of(context).brightness == Brightness.dark
+      ? lightTextColor
+      : lightTextColor; 
+
   return DataRow(
     cells: [
       DataCell(
@@ -126,20 +175,23 @@ DataRow recentFileDataRow(BuildContext context, UserReservation reservation) {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
-              child: Text(reservation.title!),
+              child: Text(reservation.title!,
+                  style: TextStyle(color: mainPrimaryTextColor)),
             ),
           ],
         ),
       ),
-      DataCell(Text(reservation.getFormattedCheckInDate())),
-      DataCell(Text(reservation.size ?? 'Unknown Size')),
+      DataCell(Text(reservation.getFormattedCheckInDate(),
+          style: TextStyle(color: mainPrimaryTextColor))),
+      DataCell(Text(reservation.size ?? 'Unknown Size',
+          style: TextStyle(color: mainPrimaryTextColor))),
       DataCell(isCheckedIn
           ? TextButton(
               onPressed: () {},
               //here is the check in button
               child: Text(
                 "User is already checked-in",
-                style: TextStyle(color: primaryColor),
+                style: TextStyle(color: mainPrimaryColor),
               ),
             )
           : TextButton(
@@ -149,12 +201,15 @@ DataRow recentFileDataRow(BuildContext context, UserReservation reservation) {
               //here is the check in button
         child: Text(
           "Check-In",
-          style: TextStyle(color: primaryColor),
+                style: TextStyle(color: mainPrimaryColor),
         ),
             )),
       DataCell(IconButton(
         onPressed: () => showMoreInfoDialog(context, reservation),
-        icon: Icon(Icons.more_horiz),
+        icon: Icon(
+          Icons.more_horiz,
+          color: mainPrimaryTextColor,
+        ),
       )),
     ],
   );
@@ -162,36 +217,64 @@ DataRow recentFileDataRow(BuildContext context, UserReservation reservation) {
 
 //dialog box for more info button on the data table
 void showMoreInfoDialog(BuildContext context, UserReservation reservation) {
+ 
+  Color mainPrimaryColor = Theme.of(context).brightness == Brightness.dark
+      ? primaryColor
+      : lightPrimaryColor;
+
+  Color backgroundColor = Theme.of(context).brightness == Brightness.dark
+      ? secondaryColor
+      : lightSecondaryColor;
+
+  Color mainPrimaryTextColor = Theme.of(context).brightness == Brightness.dark
+      ? lightTextColor
+      : lightTextColor;
+
+
   showDialog(
+    
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text("User Information"),
+        backgroundColor: backgroundColor,
+        title: Text("User Information",
+            style: TextStyle(color: mainPrimaryTextColor)),
         content: SingleChildScrollView(
           child: ListBody(
             children: [
               //all of the user data, from RecentReservations.dart
-              Text("Full name: ${reservation.title}"),
+              Text("Full name: ${reservation.title}",
+                  style: TextStyle(color: mainPrimaryTextColor)),
               SizedBox(height: defaultPadding),
-              Text("Check-in Date: ${reservation.getFormattedCheckInDate()}"),
+              Text("Check-in Date: ${reservation.getFormattedCheckInDate()}",
+                  style: TextStyle(color: mainPrimaryTextColor)),
               SizedBox(height: defaultPadding),
-              Text("Check-Out Date: ${reservation.getFormattedCheckOutDate()}"),
+              Text("Check-Out Date: ${reservation.getFormattedCheckOutDate()}",
+                  style: TextStyle(color: mainPrimaryTextColor)),
               SizedBox(height: defaultPadding),
-              Text("Country: ${reservation.size}"),
+              Text("Country: ${reservation.size}",
+                  style: TextStyle(color: mainPrimaryTextColor)),
               SizedBox(height: defaultPadding),
-              Text("Number of adults in the stay: ${reservation.adults}"),
+              Text("Number of adults in the stay: ${reservation.adults}",
+                  style: TextStyle(color: mainPrimaryTextColor)),
               SizedBox(height: defaultPadding),
-              Text("Number of children in the stay: ${reservation.children}"),
+              Text("Number of children in the stay: ${reservation.children}",
+                  style: TextStyle(color: mainPrimaryTextColor)),
               SizedBox(height: defaultPadding),
-              Text("Phone number of the guest: ${reservation.phone}"),
+              Text("Phone number of the guest: ${reservation.phone}",
+                  style: TextStyle(color: mainPrimaryTextColor)),
               SizedBox(height: defaultPadding),
-              Text("Guests account email: ${reservation.email}"),
+              Text("Guests account email: ${reservation.email}",
+                  style: TextStyle(color: mainPrimaryTextColor)),
               SizedBox(height: defaultPadding),
-              Text("Guests account password: ${reservation.password}"),
+              Text("Guests account password: ${reservation.password}",
+                  style: TextStyle(color: mainPrimaryTextColor)),
               SizedBox(height: defaultPadding),
-              Text("Guests room number: ${reservation.roomNumber}"),
+              Text("Guests room number: ${reservation.roomNumber}",
+                  style: TextStyle(color: mainPrimaryTextColor)),
               SizedBox(height: defaultPadding),
-              Text("Is checked in: ${reservation.isCheckedIn}"),
+              Text("Is checked in: ${reservation.isCheckedIn}",
+                  style: TextStyle(color: mainPrimaryTextColor)),
             ],
           ),
         ),
@@ -199,7 +282,7 @@ void showMoreInfoDialog(BuildContext context, UserReservation reservation) {
           TextButton(
             child: Text(
               "Close",
-              style: TextStyle(color: primaryColor),
+              style: TextStyle(color: mainPrimaryColor),
             ),
             onPressed: () {
               Navigator.of(context).pop();

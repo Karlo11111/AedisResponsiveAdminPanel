@@ -47,6 +47,14 @@ class ProfileCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color backgroundColor = Theme.of(context).brightness == Brightness.dark
+        ? secondaryColor
+        : lightSecondaryColor;
+    Color mainPrimaryTextColor = Theme.of(context).brightness == Brightness.dark
+        ? lightTextColor
+        : lightTextColor;
+
+
     return Container(
       margin: EdgeInsets.only(left: defaultPadding),
       padding: EdgeInsets.symmetric(
@@ -54,7 +62,7 @@ class ProfileCard extends StatelessWidget {
         vertical: defaultPadding / 2,
       ),
       decoration: BoxDecoration(
-        color: secondaryColor,
+        color: backgroundColor,
         borderRadius: const BorderRadius.all(Radius.circular(10)),
         border: Border.all(color: Colors.white10),
       ),
@@ -73,10 +81,14 @@ class ProfileCard extends StatelessWidget {
                           builder: (context) => AuthenticationScreen(),
                         ));
                   },
-                  child: Text("Karlo Ciciliani")),
+                  child: Text("Karlo Ciciliani",
+                      style: TextStyle(color: mainPrimaryTextColor))),
             ),
           IconButton(
-            icon: Icon(Icons.keyboard_arrow_down),
+            icon: Icon(
+              Icons.keyboard_arrow_down,
+              color: mainPrimaryTextColor,
+            ),
             onPressed: () {
               Navigator.pushReplacement(
                   context,
@@ -103,12 +115,20 @@ class SearchField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color backgroundColor = Theme.of(context).brightness == Brightness.dark
+        ? secondaryColor
+        : lightSecondaryColor;
+
+    Color mainPrimaryColor = Theme.of(context).brightness == Brightness.dark
+        ? primaryColor
+        : lightPrimaryColor;
+
     return TextField(
       onChanged: onChanged,
       controller: controller,
       decoration: InputDecoration(
         hintText: "Search",
-        fillColor: secondaryColor,
+        fillColor: backgroundColor,
         filled: true,
         border: OutlineInputBorder(
           borderSide: BorderSide.none,
@@ -122,7 +142,7 @@ class SearchField extends StatelessWidget {
             padding: EdgeInsets.all(defaultPadding * 0.75),
             margin: EdgeInsets.symmetric(horizontal: defaultPadding / 2),
             decoration: BoxDecoration(
-              color: primaryColor,
+              color: mainPrimaryColor,
               borderRadius: const BorderRadius.all(Radius.circular(10)),
             ),
             child: Icon(Icons.search), // Changed to Icon for simplicity

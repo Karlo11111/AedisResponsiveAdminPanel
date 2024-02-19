@@ -29,29 +29,7 @@ class DashboardScreen extends StatelessWidget {
                   flex: 5,
                   child: Column(
                     children: [
-                      //hello devs text
-                      LayoutBuilder(builder: 
-                      (context, constraints) => Column(
-                        children: [
-                          Text(
-                            "Hello Aedis Staff!",
-                            style: Theme.of(context).textTheme.headline6!.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: defaultPadding),
-                          Text(
-                            "Welcome to your hotel admin dashboard!",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-
-                      ),),
+                      
                       MyFiles(),
                       SizedBox(height: defaultPadding),
                       RecentReservations(),

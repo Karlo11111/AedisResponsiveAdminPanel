@@ -37,7 +37,7 @@ Widget _buildMobileLayout(BuildContext context) {
         bgColor: Theme.of(context).colorScheme.secondary,
         iconColor: Theme.of(context).colorScheme.secondary,
         onTap: (value) {
-          Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
+          
         },
       ),
     ],

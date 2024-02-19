@@ -11,13 +11,20 @@ class ReservationsChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color backgroundColor = Theme.of(context).brightness == Brightness.dark
+        ? secondaryColor
+        : lightSecondaryColor;
+
+    Color mainPrimaryTextColor = Theme.of(context).brightness == Brightness.dark
+        ? lightTextColor
+        : lightTextColor;
     // Calculate the dates for 3 days before to 3 days after today
     List<DateTime> dateRange = List.generate(
         7, (index) => DateTime.now().subtract(Duration(days: 3 - index)));
 
     return Container(
       decoration: BoxDecoration(
-        color: secondaryColor,
+        color: backgroundColor,
         borderRadius: const BorderRadius.all(
           Radius.circular(defaultPadding),
         ),
@@ -29,7 +36,7 @@ class ReservationsChart extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text("Recent reservations graph",
-                style: Theme.of(context).textTheme.titleMedium),
+                style: TextStyle(color: mainPrimaryTextColor)),
           ),
           Expanded(
             child: FutureBuilder<List<QuerySnapshot>>(

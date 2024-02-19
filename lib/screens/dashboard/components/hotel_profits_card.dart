@@ -14,10 +14,18 @@ class FileInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color backgroundColor = Theme.of(context).brightness == Brightness.dark
+        ? secondaryColor
+        : lightSecondaryColor;
+
+    Color mainPrimaryTextColor = Theme.of(context).brightness == Brightness.dark
+        ? lightTextColor
+        : lightTextColor;
+
     return Container(
       padding: EdgeInsets.all(defaultPadding),
       decoration: BoxDecoration(
-        color: secondaryColor,
+        color: backgroundColor,
         borderRadius: const BorderRadius.all(Radius.circular(10)),
       ),
       child: Column(
@@ -48,6 +56,7 @@ class FileInfoCard extends StatelessWidget {
             info.title!,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
+            style: TextStyle(color: mainPrimaryTextColor),
           ),
           ProgressLine(
             color: info.color,
@@ -58,10 +67,7 @@ class FileInfoCard extends StatelessWidget {
             children: [
               Text(
                 "${info.numOfFiles} ",
-                style: Theme.of(context)
-                    .textTheme
-                    .bodySmall!
-                    .copyWith(color: Colors.white70),
+                style: TextStyle(color: mainPrimaryTextColor),
               ),
             ],
           )

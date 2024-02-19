@@ -9,6 +9,14 @@ class ActivityOverview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color backgroundColor = Theme.of(context).brightness == Brightness.dark
+        ? secondaryColor
+        : lightSecondaryColor;
+
+    Color mainPrimaryTextColor = Theme.of(context).brightness == Brightness.dark
+        ? lightTextColor
+        : lightTextColor;
+
     // Calculate the time 8 hours ago from now
     final eightHoursAgo = DateTime.now().subtract(Duration(hours: 8));
     // Convert this DateTime to a Timestamp
@@ -66,14 +74,14 @@ class ActivityOverview extends StatelessWidget {
         return Container(
           padding: EdgeInsets.all(defaultPadding),
           decoration: BoxDecoration(
-            color: secondaryColor,
+            color: backgroundColor,
             borderRadius: const BorderRadius.all(Radius.circular(10)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text("Recent Activity (Last 8 Hours)",
-                  style: Theme.of(context).textTheme.titleMedium),
+                  style: TextStyle(color: mainPrimaryTextColor)),
                   
               SizedBox(height: defaultPadding),
               ...recentBookings

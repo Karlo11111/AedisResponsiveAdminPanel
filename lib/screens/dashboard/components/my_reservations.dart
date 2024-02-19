@@ -21,6 +21,7 @@ class MyFiles extends StatelessWidget {
             Text(
               "Hotel statistics",
               style: Theme.of(context).textTheme.titleMedium,
+
             ),
           ],
         ),

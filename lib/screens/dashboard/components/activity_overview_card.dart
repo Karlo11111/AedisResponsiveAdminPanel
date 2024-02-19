@@ -14,6 +14,9 @@ class ActivityOverviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color mainPrimaryTextColor = Theme.of(context).brightness == Brightness.dark
+        ? lightTextColor
+        : lightTextColor;
     return Container(
       margin: EdgeInsets.only(top: defaultPadding),
       padding: EdgeInsets.all(defaultPadding),
@@ -40,6 +43,7 @@ class ActivityOverviewCard extends StatelessWidget {
                     title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: mainPrimaryTextColor),
                   ),
                 ],
               ),

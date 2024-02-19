@@ -13,7 +13,13 @@ class SideMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color backgroundColor = Theme.of(context).brightness == Brightness.dark
+        ? secondaryColor
+        : lightSecondaryColor;
+
+    
     return Drawer(
+      backgroundColor: backgroundColor,
       child: ListView(
         children: [
           DrawerHeader(
@@ -90,6 +96,13 @@ class DrawerListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color mainPrimaryColor = Theme.of(context).brightness == Brightness.dark
+        ? primaryColor
+        : lightPrimaryColor;
+
+    Color mainPrimaryTextColor = Theme.of(context).brightness == Brightness.dark
+        ? lightTextColor
+        : lightTextColor;
     return Container(
       decoration: BoxDecoration(
         border: selectedIndex ? Border(left: BorderSide(width: 5, color: Colors.white)) : null,
@@ -99,13 +112,13 @@ class DrawerListTile extends StatelessWidget {
         horizontalTitleGap: 0.0,
         leading: SvgPicture.asset(
           svgSrc,
-          colorFilter: ColorFilter.mode(Colors.white54, BlendMode.srcIn),
+          colorFilter: ColorFilter.mode(mainPrimaryColor, BlendMode.srcIn),
           height: 16,
         ),
         selected: selectedIndex,
         title: Text(
           title,
-          style: TextStyle(color: Colors.white54),
+          style: TextStyle(color: mainPrimaryTextColor),
         ),
       ),
     );
@@ -127,6 +140,14 @@ class SupportDrawerListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
+    Color mainPrimaryColor = Theme.of(context).brightness == Brightness.dark
+        ? primaryColor
+        : lightPrimaryColor;
+
+    Color mainPrimaryTextColor = Theme.of(context).brightness == Brightness.dark
+        ? lightTextColor
+        : lightTextColor;
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance.collection('Help').snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -155,7 +176,7 @@ class SupportDrawerListTile extends StatelessWidget {
             horizontalTitleGap: 0.0,
             leading: SvgPicture.asset(
               svgSrc,
-              colorFilter: ColorFilter.mode(Colors.white54, BlendMode.srcIn),
+              colorFilter: ColorFilter.mode(mainPrimaryColor, BlendMode.srcIn),
               height: 16,
             ),
             selected: selectedIndex,
@@ -164,7 +185,7 @@ class SupportDrawerListTile extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: TextStyle(color: Colors.white54),
+                  style: TextStyle(color: mainPrimaryTextColor),
                 ),
                 SizedBox(
                   width: 15,
@@ -173,7 +194,7 @@ class SupportDrawerListTile extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.all(2),
                     decoration: BoxDecoration(
-                      color: primaryColor,
+                      color: mainPrimaryColor,
                       borderRadius: BorderRadius.circular(6),
                     ),
                     constraints: BoxConstraints(
@@ -183,7 +204,7 @@ class SupportDrawerListTile extends StatelessWidget {
                     child: Text(
                       '$documentCount',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: mainPrimaryTextColor,
                         fontSize: 12,
                       ),
                       textAlign: TextAlign.center,
