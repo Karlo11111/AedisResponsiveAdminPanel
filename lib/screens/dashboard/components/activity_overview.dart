@@ -17,9 +17,7 @@ class ActivityOverview extends StatelessWidget {
         ? lightTextColor
         : lightTextColor;
 
-    // Calculate the time 8 hours ago from now
     final eightHoursAgo = DateTime.now().subtract(Duration(hours: 8));
-    // Convert this DateTime to a Timestamp
     final Timestamp eightHoursAgoTimestamp = Timestamp.fromDate(eightHoursAgo);
 
     return StreamBuilder<QuerySnapshot>(
@@ -40,10 +38,12 @@ class ActivityOverview extends StatelessWidget {
 
         for (var userDoc in snapshot.data!.docs) {
           var data = userDoc.data() as Map<String, dynamic>;
+          // Include KornatiAppointments in the list of booking types
           for (String bookingType in [
             'MassageAppointments',
             'SpaAppointments',
-            'DivingSessionAppointments'
+            'DivingSessionAppointments',
+            'KornatiAppointments' // Added KornatiAppointments here
           ]) {
             if (data.containsKey(bookingType) &&
                 data[bookingType] is List &&
@@ -53,13 +53,11 @@ class ActivityOverview extends StatelessWidget {
 
               for (var booking in bookings) {
                 Timestamp bookingTimestamp = booking['DateOfBooking'];
-                // If the booking timestamp is after eight hours ago, it's recent
                 if (bookingTimestamp.compareTo(eightHoursAgoTimestamp) >= 0) {
                   recentBookings.add({
                     'Type': bookingType,
                     'Name': booking['Name'] ?? 'No Booking',
-                    'DateOfBooking': bookingTimestamp
-                        .toDate(), // Convert to DateTime for display
+                    'DateOfBooking': bookingTimestamp.toDate(),
                   });
                 }
               }
@@ -67,7 +65,6 @@ class ActivityOverview extends StatelessWidget {
           }
         }
 
-        // Sort the recent bookings by date, most recent first
         recentBookings
             .sort((a, b) => b['DateOfBooking'].compareTo(a['DateOfBooking']));
 
@@ -82,12 +79,10 @@ class ActivityOverview extends StatelessWidget {
             children: [
               Text("Recent Activity (Last 8 Hours)",
                   style: TextStyle(color: mainPrimaryTextColor)),
-                  
               SizedBox(height: defaultPadding),
               ...recentBookings
                   .map((booking) => ActivityOverviewCard(
-                        svgSrc: getIconPath(booking[
-                            'Type']), // Implement this function based on type
+                        svgSrc: getIconPath(booking['Type']),
                         title:
                             "${getShortServiceName(booking['Type'])} booked by ${booking['Name']}",
                       ))
@@ -107,6 +102,8 @@ class ActivityOverview extends StatelessWidget {
         return "assets/icons/spa.svg";
       case 'DivingSessionAppointments':
         return "assets/icons/diving.svg";
+      case 'KornatiAppointments':
+        return "assets/icons/kornati.svg"; 
       default:
         return "assets/icons/unknown.svg";
     }
@@ -120,6 +117,8 @@ class ActivityOverview extends StatelessWidget {
         return "Spa";
       case 'DivingSessionAppointments':
         return "Diving";
+      case 'KornatiAppointments':
+        return "Kornati trip"; 
       default:
         return "Unknown";
     }
