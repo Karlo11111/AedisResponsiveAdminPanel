@@ -23,6 +23,7 @@ class RecentReservations extends StatefulWidget {
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 class _RecentReservationsState extends State<RecentReservations> {
+  bool isLoading = false;
   //funciton that fetches reservations from firebase
   Stream<List<UserReservation>> streamReservations() {
     return FirebaseFirestore.instance
@@ -32,8 +33,6 @@ class _RecentReservationsState extends State<RecentReservations> {
             .map((doc) => UserReservation.fromMap(doc.data()))
             .toList());
   }
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -45,179 +44,265 @@ class _RecentReservationsState extends State<RecentReservations> {
         ? lightTextColor
         : lightTextColor;
 
-    return Container(
-      padding: EdgeInsets.all(defaultPadding),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Recent Reservations",
-            style: TextStyle(color: mainPrimaryTextColor),
-          ),
-          SizedBox(
-            width: double.infinity,
-            child: StreamBuilder<List<UserReservation>>(
-              stream: streamReservations(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: Text("Waiting for connection!"),
-                  );
-                }
-                if (snapshot.hasError) {
-                  print(
-                      "Error fetching data: ${snapshot.error}"); // Debugging line
-                  return Text("Error: ${snapshot.error}");
-                }
-                if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Text("No Data Available");
-                }
-                var reservations = snapshot.data!;
-                // Sorting the reservations by check-in date
-                reservations.sort((a, b) {
-                  // Handle null dates by placing them at the end
-                  var dateA = a.checkInDate?.toDate() ?? DateTime(9999);
-                  var dateB = b.checkInDate?.toDate() ?? DateTime(9999);
-                  return dateA.compareTo(dateB);
-                });
-                //the data table for users reservations
-                return Responsive.isMobile(context) ||
-                        Responsive.isTablet(context)
-                    ? SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: DataTable(
-                          columnSpacing: defaultPadding,
-                          columns: [
-                            DataColumn(
-                                label: Text("Full Name",
-                                    style: TextStyle(
-                                        color: mainPrimaryTextColor))),
-                            DataColumn(
-                                label: Text("Check-in Date",
-                                    style: TextStyle(
-                                        color: mainPrimaryTextColor))),
-                            DataColumn(
-                                label: Text("Country",
-                                    style: TextStyle(
-                                        color: mainPrimaryTextColor))),
-                            DataColumn(
-                                label: Text("Check-In",
-                                    style: TextStyle(
-                                        color: mainPrimaryTextColor))),
-                            DataColumn(
-                                label: Text("More Info",
-                                    style: TextStyle(
-                                        color: mainPrimaryTextColor))),
-                          ],
-                          rows: reservations
-                              .map((reservation) =>
-                                  recentFileDataRow(context, reservation))
-                              .toList(),
-                        ),
-                      )
-                    : DataTable(
-                        columnSpacing: defaultPadding,
-                        columns: [
-                          DataColumn(
-                              label: Text("Full Name",
-                                  style:
-                                      TextStyle(color: mainPrimaryTextColor))),
-                          DataColumn(
-                              label: Text("Check-in Date",
-                                  style:
-                                      TextStyle(color: mainPrimaryTextColor))),
-                          DataColumn(
-                              label: Text("Country",
-                                  style:
-                                      TextStyle(color: mainPrimaryTextColor))),
-                          DataColumn(
-                              label: Text("Check-In",
-                                  style:
-                                      TextStyle(color: mainPrimaryTextColor))),
-                          DataColumn(
-                              label: Text("More Info",
-                                  style:
-                                      TextStyle(color: mainPrimaryTextColor))),
-                        ],
-                        rows: reservations
-                            .map((reservation) =>
-                                recentFileDataRow(context, reservation))
-                            .toList(),
-                      );
+    return Center(
+        child: isLoading
+            ? CircularProgressIndicator()
+            : Container(
+                padding: EdgeInsets.all(defaultPadding),
+                decoration: BoxDecoration(
+                  color: backgroundColor,
+                  borderRadius: const BorderRadius.all(Radius.circular(10)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Recent Reservations",
+                      style: TextStyle(color: mainPrimaryTextColor),
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: StreamBuilder<List<UserReservation>>(
+                        stream: streamReservations(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(
+                              child: Text("Waiting for connection!"),
+                            );
+                          }
+                          if (snapshot.hasError) {
+                            print(
+                                "Error fetching data: ${snapshot.error}"); // Debugging line
+                            return Text("Error: ${snapshot.error}");
+                          }
+                          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                            return Text("No Data Available");
+                          }
+                          var reservations = snapshot.data!;
+                          // Sorting the reservations by check-in date
+                          reservations.sort((a, b) {
+                            // Handle null dates by placing them at the end
+                            var dateA =
+                                a.checkInDate?.toDate() ?? DateTime(9999);
+                            var dateB =
+                                b.checkInDate?.toDate() ?? DateTime(9999);
+                            return dateA.compareTo(dateB);
+                          });
+                          //the data table for users reservations
+                          return Responsive.isMobile(context) ||
+                                  Responsive.isTablet(context)
+                              ? SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: DataTable(
+                                    columnSpacing: defaultPadding,
+                                    columns: [
+                                      DataColumn(
+                                          label: Text("Full Name",
+                                              style: TextStyle(
+                                                  color:
+                                                      mainPrimaryTextColor))),
+                                      DataColumn(
+                                          label: Text("Check-in Date",
+                                              style: TextStyle(
+                                                  color:
+                                                      mainPrimaryTextColor))),
+                                      DataColumn(
+                                          label: Text("Country",
+                                              style: TextStyle(
+                                                  color:
+                                                      mainPrimaryTextColor))),
+                                      DataColumn(
+                                          label: Text("Check-In",
+                                              style: TextStyle(
+                                                  color:
+                                                      mainPrimaryTextColor))),
+                                      DataColumn(
+                                          label: Text("More Info",
+                                              style: TextStyle(
+                                                  color:
+                                                      mainPrimaryTextColor))),
+                                    ],
+                                    rows: reservations
+                                        .map((reservation) => recentFileDataRow(
+                                            context, reservation))
+                                        .toList(),
+                                  ),
+                                )
+                              : DataTable(
+                                  columnSpacing: defaultPadding,
+                                  columns: [
+                                    DataColumn(
+                                        label: Text("Full Name",
+                                            style: TextStyle(
+                                                color: mainPrimaryTextColor))),
+                                    DataColumn(
+                                        label: Text("Check-in Date",
+                                            style: TextStyle(
+                                                color: mainPrimaryTextColor))),
+                                    DataColumn(
+                                        label: Text("Country",
+                                            style: TextStyle(
+                                                color: mainPrimaryTextColor))),
+                                    DataColumn(
+                                        label: Text("Check-In",
+                                            style: TextStyle(
+                                                color: mainPrimaryTextColor))),
+                                    DataColumn(
+                                        label: Text("More Info",
+                                            style: TextStyle(
+                                                color: mainPrimaryTextColor))),
+                                  ],
+                                  rows: reservations
+                                      .map((reservation) => recentFileDataRow(
+                                          context, reservation))
+                                      .toList(),
+                                );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ));
+  }
+
+  //function for uploading the image when on the pc
+  void _uploadImage() {
+    setState(() {
+      isLoading = true;
+    });
+    // Create an HTML file input element
+    html.FileUploadInputElement uploadInput = html.FileUploadInputElement()
+      ..accept = 'image/*';
+
+    // Trigger the file input element to open the file selector
+    uploadInput.click();
+
+    // Listen for changes
+    uploadInput.onChange.listen((e) {
+      final files = uploadInput.files;
+      if (files != null && files.isNotEmpty) {
+        final file = files[0];
+        final reader = html.FileReader();
+
+        // Read the file as a data URL
+        reader.readAsDataUrl(file);
+        reader.onLoadEnd.listen((event) async {
+          if (reader.result != null) {
+            final String base64String = reader.result as String;
+            final String base64Content = base64String.split(',')[1];
+
+            // Send the image to the Microblink API
+            try {
+              await sendImageToMicroblinkApi(base64Content);
+            } finally {
+              // Hide progress indicator regardless of success/failure
+              setState(() {
+                isLoading = false;
+              });
+            }
+          }
+        });
+      }
+    });
+
+    // Remove the input element after file selection
+    uploadInput.onChange.first.then((_) {
+      uploadInput.remove();
+    });
+  }
+
+  //function for alert dialog for choosing the upload or camera
+  void uploadOrCaptureImage(BuildContext context) {
+    // Show an alert dialog with options
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Upload or Capture Image'),
+          content: Text('Choose how you want to provide the image.'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Upload Image'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _uploadImage();
               },
             ),
+            TextButton(
+              child: Text('Capture Image'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _captureImage();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  DataRow recentFileDataRow(BuildContext context, UserReservation reservation) {
+    bool isCheckedIn = reservation.isCheckedIn!;
+
+    Color mainPrimaryColor = Theme.of(context).brightness == Brightness.dark
+        ? primaryColor
+        : lightPrimaryColor;
+
+    Color mainPrimaryTextColor = Theme.of(context).brightness == Brightness.dark
+        ? lightTextColor
+        : lightTextColor;
+
+    return DataRow(
+      cells: [
+        DataCell(
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
+                child: Text(reservation.title!,
+                    style: TextStyle(color: mainPrimaryTextColor)),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+        DataCell(Text(reservation.getFormattedCheckInDate(),
+            style: TextStyle(color: mainPrimaryTextColor))),
+        DataCell(Text(reservation.size ?? 'Unknown Size',
+            style: TextStyle(color: mainPrimaryTextColor))),
+        DataCell(isCheckedIn
+            ? TextButton(
+                onPressed: () {},
+                //here is the check in button
+                child: Text(
+                  "User is already checked-in",
+                  style: TextStyle(color: mainPrimaryColor),
+                ),
+              )
+            : TextButton(
+                onPressed: () {
+                  uploadOrCaptureImage(context);
+                },
+                //here is the check in button
+                child: Text(
+                  "Check-In",
+                  style: TextStyle(color: mainPrimaryColor),
+                ),
+              )),
+        DataCell(IconButton(
+          onPressed: () => showMoreInfoDialog(context, reservation),
+          icon: Icon(
+            Icons.more_horiz,
+            color: mainPrimaryTextColor,
+          ),
+        )),
+      ],
     );
   }
 }
 
-DataRow recentFileDataRow(BuildContext context, UserReservation reservation) {
-  bool isCheckedIn = reservation.isCheckedIn!;
-  
-  Color mainPrimaryColor = Theme.of(context).brightness == Brightness.dark
-      ? primaryColor
-      : lightPrimaryColor;
-
-  Color mainPrimaryTextColor = Theme.of(context).brightness == Brightness.dark
-      ? lightTextColor
-      : lightTextColor; 
-
-  return DataRow(
-    cells: [
-      DataCell(
-        Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
-              child: Text(reservation.title!,
-                  style: TextStyle(color: mainPrimaryTextColor)),
-            ),
-          ],
-        ),
-      ),
-      DataCell(Text(reservation.getFormattedCheckInDate(),
-          style: TextStyle(color: mainPrimaryTextColor))),
-      DataCell(Text(reservation.size ?? 'Unknown Size',
-          style: TextStyle(color: mainPrimaryTextColor))),
-      DataCell(isCheckedIn
-          ? TextButton(
-              onPressed: () {},
-              //here is the check in button
-              child: Text(
-                "User is already checked-in",
-                style: TextStyle(color: mainPrimaryColor),
-              ),
-            )
-          : TextButton(
-        onPressed: () {
-          uploadOrCaptureImage(context);
-        },
-              //here is the check in button
-        child: Text(
-          "Check-In",
-                style: TextStyle(color: mainPrimaryColor),
-        ),
-            )),
-      DataCell(IconButton(
-        onPressed: () => showMoreInfoDialog(context, reservation),
-        icon: Icon(
-          Icons.more_horiz,
-          color: mainPrimaryTextColor,
-        ),
-      )),
-    ],
-  );
-}
-
 //dialog box for more info button on the data table
 void showMoreInfoDialog(BuildContext context, UserReservation reservation) {
- 
   Color mainPrimaryColor = Theme.of(context).brightness == Brightness.dark
       ? primaryColor
       : lightPrimaryColor;
@@ -230,9 +315,7 @@ void showMoreInfoDialog(BuildContext context, UserReservation reservation) {
       ? lightTextColor
       : lightTextColor;
 
-
   showDialog(
-    
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
@@ -294,72 +377,6 @@ void showMoreInfoDialog(BuildContext context, UserReservation reservation) {
   );
 }
 
-//function for alert dialog for choosing the upload or camera
-void uploadOrCaptureImage(BuildContext context) {
-  // Show an alert dialog with options
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text('Upload or Capture Image'),
-        content: Text('Choose how you want to provide the image.'),
-        actions: <Widget>[
-          TextButton(
-            child: Text('Upload Image'),
-            onPressed: () {
-              Navigator.of(context).pop();
-              _uploadImage();
-            },
-          ),
-          TextButton(
-            child: Text('Capture Image'),
-            onPressed: () {
-              Navigator.of(context).pop();
-              _captureImage();
-            },
-          ),
-        ],
-      );
-    },
-  );
-}
-
-//function for uploading the image when on the pc
-void _uploadImage() {
-  // Create an HTML file input element
-  html.FileUploadInputElement uploadInput = html.FileUploadInputElement()
-    ..accept = 'image/*';
-
-  // Trigger the file input element to open the file selector
-  uploadInput.click();
-
-  // Listen for changes
-  uploadInput.onChange.listen((e) {
-    final files = uploadInput.files;
-    if (files != null && files.isNotEmpty) {
-      final file = files[0];
-      final reader = html.FileReader();
-
-      // Read the file as a data URL
-      reader.readAsDataUrl(file);
-      reader.onLoadEnd.listen((event) async {
-        if (reader.result != null) {
-          final String base64String = reader.result as String;
-          final String base64Content = base64String.split(',')[1];
-
-          // Send the image to the Microblink API
-          await sendImageToMicroblinkApi(base64Content);
-        }
-      });
-    }
-  });
-
-  // Remove the input element after file selection
-  uploadInput.onChange.first.then((_) {
-    uploadInput.remove();
-  });
-}
-
 //function for capturing an image when on the phone
 void _captureImage() {
   // Create an HTML file input element
@@ -409,7 +426,7 @@ Future<void> sendImageToMicroblinkApi(String base64Image) async {
       'https://api.microblink.com/v1/recognizers/mrtd';
 
   const String authorizationHeader =
-      "Bearer NDk2ZGQxOTVlYTYxNDM1Y2IwNDVlOTEyYTZhNDg2M2M6ZTY4MjU0NjAtMDJiOC00ZjJmLWFkMGMtM2FkOTFjNmRhMjJl";
+      "Bearer MjQzMTRhYTY1NWIyNDZlYjgzZWVhNzNmOTk1NGMxMjE6YzBlNzQxZDEtNzI3ZC00OGI0LTgzYjAtYWM3ZWZiZjZlMjk2";
 
   // Construct the body according to the Microblink MRTDRequest schema
   final body = jsonEncode({
